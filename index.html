@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ranking de Afiliados | Novaklar</title>
+  <link href="https://fonts.googleapis.com/css2?family=Comme:wght@700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: white;
+      color: #333;
+    }
+
+    header {
+      background-color: #00128f;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 1.5rem;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    header img {
+      height: 40px;
+      filter: brightness(0) invert(1);
+    }
+
+    header a {
+      text-decoration: none;
+      color: white;
+      font-weight: 600;
+      font-size: 1rem;
+      padding: 0.5rem 1rem;
+      border-radius: 4px;
+      transition: background-color 0.2s;
+    }
+
+    header a:hover {
+      background-color: rgba(255,255,255,0.2);
+    }
+
+    .page-title {
+      font-family: 'Comme', sans-serif;
+      font-size: 2.2rem;
+      font-weight: 700;
+      color: #00128f;
+      text-align: center;
+      margin: 3rem 0 2rem;
+      padding: 0 1rem;
+    }
+
+    .ranking-container {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 0 1.5rem 2rem;
+    }
+
+    .ranking-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1rem;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+      border-radius: 0.6rem;
+      overflow: hidden;
+    }
+
+    .ranking-table thead {
+      background-color: #6c91ff;
+      color: white;
+    }
+
+    .ranking-table th {
+      padding: 1rem;
+      text-align: left;
+      font-weight: 600;
+    }
+
+    .ranking-table td {
+      padding: 0.8rem 1rem;
+      border-bottom: 1px solid #e2e8f0;
+    }
+
+    .ranking-table tbody tr:nth-child(even) {
+      background-color: #f8fafc;
+    }
+
+    .ranking-table tbody tr:last-child td {
+      border-bottom: none;
+    }
+
+    .ranking-table tbody tr:hover {
+      background-color: #f1f5f9;
+    }
+
+    .rank-number {
+      font-weight: bold;
+      color: #6c91ff;
+      width: 40px;
+    }
+
+    .recruiter-name {
+      font-weight: 600;
+      color: #00128f;
+    }
+
+    .recruited-name {
+      font-weight: 500;
+    }
+
+    .sales-count {
+      text-align: right;
+      font-weight: 600;
+    }
+
+    .sales-under-limit {
+      color: #c62828; /* Rojo */
+    }
+
+    .sales-over-limit {
+      color: #2e7d32; /* Verde */
+      font-weight: 700;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 2rem;
+      font-style: italic;
+      color: #666;
+    }
+
+    .error-message {
+      color: #d32f2f;
+      background-color: #fde8e8;
+      padding: 1rem;
+      border-radius: 4px;
+      margin: 1rem 0;
+      text-align: center;
+    }
+
+    .last-updated {
+      text-align: right;
+      font-size: 0.8rem;
+      color: #6c91ff;
+      margin-top: 0.5rem;
+      font-weight: 500;
+    }
+
+    .refresh-btn {
+      display: block;
+      margin: 1rem auto;
+      padding: 0.5rem 1rem;
+      background-color: #6c91ff;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-weight: 600;
+    }
+
+    .refresh-btn:hover {
+      background-color: #5a8ce6;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+
+    .limit-message {
+      background-color: #ffebee;
+      color: #c62828;
+      padding: 0.8rem;
+      border-radius: 4px;
+      margin: 0.5rem 0;
+      font-weight: 500;
+      border-left: 4px solid #c62828;
+      display: none;
+    }
+
+    @media (max-width: 768px) {
+      .ranking-container {
+        overflow-x: auto;
+      }
+      
+      .ranking-table {
+        min-width: 600px;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .page-title {
+        font-size: 1.8rem;
+        margin: 2rem 0 1.5rem;
+      }
+      
+      .ranking-container {
+        padding: 0 1rem 1.5rem;
+      }
+      
+      .ranking-table th, 
+      .ranking-table td {
+        padding: 0.6rem 0.8rem;
+        font-size: 0.9rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <img src="https://raw.githubusercontent.com/novaklar/web/refs/heads/main/Novaklar.svg" alt="Novaklar Logo" />
+    <a href="https://novaklar.github.io/web/">Regresar</a>
+  </header>
+
+  <h1 class="page-title">Ranking de Afiliados</h1>
+
+  <div class="ranking-container">
+    <div id="loading" class="loading">Cargando datos...</div>
+    <div id="error" class="error-message" style="display: none;"></div>
+    
+    <button id="refresh-btn" class="refresh-btn">
+      <span id="refresh-text">Actualizar ahora</span>
+      <span id="refresh-icon" style="margin-left: 5px;">↻</span>
+    </button>
+    
+    <div id="limit-message" class="limit-message"></div>
+    
+    <table class="ranking-table" id="ranking-table" style="display: none;">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Reclutador</th>
+          <th>Reclutado</th>
+          <th>Ventas</th>
+        </tr>
+      </thead>
+      <tbody id="ranking-body">
+        <!-- Los datos se cargarán aquí con JavaScript -->
+      </tbody>
+    </table>
+    
+    <div id="last-updated" class="last-updated"></div>
+  </div>
+
+  <script>
+    // Configuración
+    const SPREADSHEET_ID = '11jIxfO6Ah2CTRMGXXppwDoOuwC2DJJu9B3K96IW94ew';
+    const SHEET_NAME = 'Form Responses 1';
+    const RANGE = 'A:C';
+    const SALES_LIMIT = 5;
+    const UPDATE_INTERVAL = 5 * 60 * 1000;
+
+    // Elementos del DOM
+    const rankingBody = document.getElementById('ranking-body');
+    const loadingElement = document.getElementById('loading');
+    const errorElement = document.getElementById('error');
+    const tableElement = document.getElementById('ranking-table');
+    const lastUpdatedElement = document.getElementById('last-updated');
+    const refreshBtn = document.getElementById('refresh-btn');
+    const refreshText = document.getElementById('refresh-text');
+    const refreshIcon = document.getElementById('refresh-icon');
+    const limitMessageElement = document.getElementById('limit-message');
+
+    // Variable para el intervalo de actualización
+    let refreshInterval;
+
+    // Función para normalizar nombres (quitar tildes, convertir a minúsculas, etc.)
+    function normalizeName(name) {
+      if (!name) return '';
+      
+      return name.toLowerCase()
+        .normalize("NFD").replace(/[\u0300-\u036f]/g, "") // Quitar tildes
+        .replace(/[^a-z0-9áéíóúüñ\s]/g, "") // Quitar caracteres especiales
+        .trim();
+    }
+
+    // Función para formatear la fecha
+    function formatDate(date) {
+      const options = { 
+        year: 'numeric', 
+        month: 'long', 
+        day: 'numeric', 
+        hour: '2-digit', 
+        minute: '2-digit',
+        second: '2-digit'
+      };
+      return new Date(date).toLocaleDateString('es-ES', options);
+    }
+
+    // Función para animar el icono de actualización
+    function spinRefreshIcon() {
+      let rotation = 0;
+      const spinInterval = setInterval(() => {
+        rotation += 30;
+        if (rotation >= 360) rotation = 0;
+        refreshIcon.style.transform = `rotate(${rotation}deg)`;
+      }, 50);
+      return spinInterval;
+    }
+
+    // Función para parsear datos de reclutados y ventas (versión mejorada)
+    function parseRecruitedData(text) {
+      try {
+        if (!text || typeof text !== 'string') return null;
+        
+        // Normalizar el texto de entrada
+        text = text.trim()
+          .replace(/\s+/g, ' ') // Multiples espacios a uno solo
+          .replace(/,/g, '.')   // Permitir comas como decimales
+          .replace(/[^a-zA-Z0-9áéíóúÁÉÍÓÚñÑüÜ\s\-\.]/g, ''); // Limpiar caracteres especiales
+        
+        // Patrones de coincidencia más flexibles
+        const patterns = [
+          // Formato "Nombre 5" o "Nombre - 5"
+          /^(.*?)\s*(?:-|\/|:)?\s*(\d+)$/,
+          // Formato "5 Nombre"
+          /^(\d+)\s+(.*)$/,
+          // Solo nombre (asumir 1 venta)
+          /^([a-zA-ZáéíóúÁÉÍÓÚñÑüÜ\s]+)$/
+        ];
+        
+        let name, sales;
+        
+        for (const pattern of patterns) {
+          const match = text.match(pattern);
+          if (match) {
+            if (pattern === patterns[0]) { // "Nombre 5"
+              name = match[1].trim();
+              sales = parseInt(match[2]);
+            } else if (pattern === patterns[1]) { // "5 Nombre"
+              name = match[2].trim();
+              sales = parseInt(match[1]);
+            } else if (pattern === patterns[2]) { // Solo nombre
+              name = match[1].trim();
+              sales = 1;
+            }
+            
+            // Validación básica
+            if (name && name.length >= 2 && !isNaN(sales)) {
+              return { 
+                name: name, 
+                originalName: name, // Guardamos el original para mostrar
+                sales: Math.max(1, sales) // Asegurar mínimo 1 venta
+              };
+            }
+          }
+        }
+        
+        return null;
+      } catch (error) {
+        console.error('Error parsing recruited data:', text, error);
+        return null;
+      }
+    }
+
+    // Función para consolidar datos (versión mejorada)
+    function consolidateData(rows) {
+      const recruitersMap = new Map();
+      let limitReachedRecruits = [];
+      
+      try {
+        rows.forEach(row => {
+          if (!row.c || !Array.isArray(row.c)) return;
+          
+          const recruiterCell = row.c[1];
+          let recruiterName = recruiterCell ? String(recruiterCell.v || recruiterCell.f || '').trim() : '';
+          
+          const recruitedCell = row.c[2];
+          const recruitedText = recruitedCell ? String(recruitedCell.v || recruitedCell.f || '').trim() : '';
+          
+          if (recruiterName && recruitedText) {
+            const recruitedData = parseRecruitedData(recruitedText);
+            if (recruitedData) {
+              // Normalizar nombre del reclutador para agrupar
+              const normalizedRecruiter = normalizeName(recruiterName);
+              
+              // Verificar si alcanzó el límite
+              if (recruitedData.sales >= SALES_LIMIT) {
+                limitReachedRecruits.push(recruitedData.originalName);
+              }
+              
+              // Agregar al mapa de reclutadores
+              if (recruitersMap.has(normalizedRecruiter)) {
+                const recruiter = recruitersMap.get(normalizedRecruiter);
+                
+                // Verificar si ya existe este reclutado (por nombre normalizado)
+                const normalizedRecruited = normalizeName(recruitedData.name);
+                const existingRecruit = recruiter.recruited.find(r => 
+                  normalizeName(r.name) === normalizedRecruited);
+                
+                if (existingRecruit) {
+                  // Sumar ventas si es el mismo reclutado
+                  existingRecruit.sales += recruitedData.sales;
+                } else {
+                  // Agregar nuevo reclutado
+                  recruiter.recruited.push({
+                    name: recruitedData.originalName, // Usamos el nombre original
+                    sales: recruitedData.sales
+                  });
+                }
+              } else {
+                // Nuevo reclutador
+                recruitersMap.set(normalizedRecruiter, {
+                  name: recruiterName, // Guardamos el nombre original
+                  recruited: [{
+                    name: recruitedData.originalName,
+                    sales: recruitedData.sales
+                  }]
+                });
+              }
+            }
+          }
+        });
+        
+        return {
+          recruiters: Array.from(recruitersMap.values()),
+          limitReachedRecruits: limitReachedRecruits
+        };
+      } catch (error) {
+        console.error('Error consolidating data:', error);
+        return {
+          recruiters: [],
+          limitReachedRecruits: []
+        };
+      }
+    }
+
+    // Función para renderizar el ranking
+    function renderRanking(data) {
+      rankingBody.innerHTML = '';
+      limitMessageElement.style.display = 'none';
+      
+      // Ordenar reclutadores alfabéticamente
+      data.recruiters.sort((a, b) => a.name.localeCompare(b.name));
+      
+      // Mostrar mensaje explicativo
+      limitMessageElement.innerHTML = `
+        <strong>Nota:</strong> Cuando el número de ventas se muestra en <strong>verde</strong>, significa que el reclutado ya realizó sus primeras ${SALES_LIMIT} ventas y por lo tanto ha saldado su deuda con el reclutador. Los números en <strong>rojo</strong> indican que aún no alcanzan este objetivo.
+      `;
+      limitMessageElement.style.display = 'block';
+      
+      // Renderizar cada reclutador y sus reclutados
+      data.recruiters.forEach(recruiter => {
+        // Ordenar reclutados por ventas (descendente)
+        recruiter.recruited.sort((a, b) => b.sales - a.sales);
+        
+        recruiter.recruited.forEach((recruited, index) => {
+          const row = document.createElement('tr');
+          
+          // Número de fila (solo para el primer reclutado)
+          const rankCell = document.createElement('td');
+          rankCell.className = 'rank-number';
+          if (index === 0) {
+            rankCell.textContent = data.recruiters.indexOf(recruiter) + 1;
+          }
+          row.appendChild(rankCell);
+          
+          // Nombre del reclutador (solo para el primer reclutado)
+          const recruiterCell = document.createElement('td');
+          recruiterCell.className = 'recruiter-name';
+          if (index === 0) {
+            recruiterCell.textContent = recruiter.name;
+          }
+          row.appendChild(recruiterCell);
+          
+          // Nombre del reclutado
+          const recruitedCell = document.createElement('td');
+          recruitedCell.className = 'recruited-name';
+          recruitedCell.textContent = recruited.name;
+          row.appendChild(recruitedCell);
+          
+          // Ventas con color según el límite
+          const salesCell = document.createElement('td');
+          salesCell.className = 'sales-count';
+          salesCell.textContent = recruited.sales;
+          salesCell.classList.add(recruited.sales >= SALES_LIMIT ? 'sales-over-limit' : 'sales-under-limit');
+          row.appendChild(salesCell);
+          
+          rankingBody.appendChild(row);
+        });
+      });
+    }
+
+    // Función para cargar datos desde Google Sheets
+    async function loadDataFromSheets() {
+      let spinInterval;
+      try {
+        loadingElement.style.display = 'block';
+        errorElement.style.display = 'none';
+        tableElement.style.display = 'none';
+        refreshBtn.disabled = true;
+        refreshText.textContent = 'Actualizando...';
+        spinInterval = spinRefreshIcon();
+        
+        const url = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?sheet=${encodeURIComponent(SHEET_NAME)}&range=${RANGE}&t=${new Date().getTime()}`;
+        
+        const response = await fetch(url);
+        if (!response.ok) throw new Error(`Error ${response.status}`);
+        
+        const text = await response.text();
+        const json = JSON.parse(text.substring(47).slice(0, -2));
+        
+        if (!json.table?.rows) throw new Error('Estructura de datos inesperada');
+        
+        const data = consolidateData(json.table.rows);
+        if (data.recruiters.length === 0) {
+          throw new Error('No se encontraron datos válidos');
+        }
+        
+        renderRanking(data);
+        
+        lastUpdatedElement.textContent = `Última actualización: ${formatDate(new Date())}`;
+        loadingElement.style.display = 'none';
+        tableElement.style.display = 'table';
+        
+      } catch (error) {
+        console.error('Error:', error);
+        loadingElement.style.display = 'none';
+        errorElement.textContent = `Error al cargar datos: ${error.message}`;
+        errorElement.style.display = 'block';
+      } finally {
+        if (spinInterval) clearInterval(spinInterval);
+        refreshBtn.disabled = false;
+        refreshText.textContent = 'Actualizar ahora';
+        refreshIcon.style.transform = 'rotate(0deg)';
+      }
+    }
+
+    // Inicia la actualización automática
+    function startAutoRefresh() {
+      loadDataFromSheets();
+      refreshInterval = setInterval(loadDataFromSheets, UPDATE_INTERVAL);
+    }
+
+    // Evento para actualización manual
+    refreshBtn.addEventListener('click', () => {
+      clearInterval(refreshInterval);
+      loadDataFromSheets();
+      startAutoRefresh();
+    });
+
+    // Inicia al cargar la página
+    document.addEventListener('DOMContentLoaded', startAutoRefresh);
+  </script>
+</body>
+</html>
