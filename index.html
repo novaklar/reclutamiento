@@ -43,18 +43,19 @@
 
     .page-title {
       font-family: 'Comme', sans-serif;
-      font-size: 2.2rem;
+      font-size: 1.8rem;
       font-weight: 700;
       color: #00128f;
       text-align: center;
-      margin: 3rem 0 2rem;
+      margin: 2rem 0 1.5rem;
       padding: 0 1rem;
     }
 
     .ranking-container {
-      max-width: 1000px;
+      width: 100%;
       margin: 0 auto;
-      padding: 0 1.5rem 2rem;
+      padding: 0 1rem 1.5rem;
+      box-sizing: border-box;
     }
 
     .ranking-table {
@@ -64,6 +65,7 @@
       box-shadow: 0 3px 10px rgba(0,0,0,0.1);
       border-radius: 0.6rem;
       overflow: hidden;
+      table-layout: fixed;
     }
 
     .ranking-table thead {
@@ -72,14 +74,18 @@
     }
 
     .ranking-table th {
-      padding: 1rem;
+      padding: 0.8rem 0.5rem;
       text-align: left;
       font-weight: 600;
+      font-size: 0.9rem;
     }
 
     .ranking-table td {
-      padding: 0.8rem 1rem;
+      padding: 0.6rem 0.5rem;
       border-bottom: 1px solid #e2e8f0;
+      font-size: 0.85rem;
+      word-wrap: break-word;
+      vertical-align: top;
     }
 
     .ranking-table tbody tr:nth-child(even) {
@@ -98,20 +104,26 @@
       font-weight: bold;
       color: #6c91ff;
       width: 40px;
+      text-align: center;
     }
 
     .recruiter-name {
       font-weight: 600;
       color: #00128f;
+      width: 120px;
+      max-width: 120px;
     }
 
     .recruited-name {
       font-weight: 500;
+      width: 120px;
+      max-width: 120px;
     }
 
     .sales-count {
-      text-align: right;
+      text-align: center;
       font-weight: 600;
+      width: 60px;
     }
 
     .sales-under-limit {
@@ -137,11 +149,12 @@
       border-radius: 4px;
       margin: 1rem 0;
       text-align: center;
+      font-size: 0.9rem;
     }
 
     .last-updated {
-      text-align: right;
-      font-size: 0.8rem;
+      text-align: center;
+      font-size: 0.75rem;
       color: #6c91ff;
       margin-top: 0.5rem;
       font-weight: 500;
@@ -150,7 +163,7 @@
     .refresh-btn {
       display: block;
       margin: 1rem auto;
-      padding: 0.5rem 1rem;
+      padding: 0.6rem 1.2rem;
       background-color: #6c91ff;
       color: white;
       border: none;
@@ -158,6 +171,9 @@
       cursor: pointer;
       transition: all 0.3s ease;
       font-weight: 600;
+      font-size: 0.9rem;
+      width: 90%;
+      max-width: 300px;
     }
 
     .refresh-btn:hover {
@@ -175,33 +191,38 @@
       font-weight: 500;
       border-left: 4px solid #c62828;
       display: none;
+      font-size: 0.85rem;
     }
 
-    @media (max-width: 768px) {
-      .ranking-container {
-        overflow-x: auto;
-      }
-      
-      .ranking-table {
-        min-width: 600px;
-      }
-    }
-
-    @media (max-width: 600px) {
+    /* Estilos para pantallas muy pequeñas */
+    @media (max-width: 400px) {
       .page-title {
-        font-size: 1.8rem;
-        margin: 2rem 0 1.5rem;
-      }
-      
-      .ranking-container {
-        padding: 0 1rem 1.5rem;
+        font-size: 1.5rem;
       }
       
       .ranking-table th, 
       .ranking-table td {
-        padding: 0.6rem 0.8rem;
-        font-size: 0.9rem;
+        padding: 0.5rem 0.3rem;
+        font-size: 0.8rem;
       }
+      
+      .recruiter-name,
+      .recruited-name {
+        width: 100px;
+        max-width: 100px;
+      }
+      
+      .sales-count {
+        width: 50px;
+      }
+    }
+
+    /* Estilo para cuando no hay datos */
+    .no-data {
+      text-align: center;
+      padding: 1rem;
+      color: #666;
+      font-style: italic;
     }
   </style>
 </head>
@@ -238,6 +259,8 @@
       </tbody>
     </table>
     
+    <div id="no-data" class="no-data" style="display: none;">No hay datos disponibles</div>
+    
     <div id="last-updated" class="last-updated"></div>
   </div>
 
@@ -259,6 +282,7 @@
     const refreshText = document.getElementById('refresh-text');
     const refreshIcon = document.getElementById('refresh-icon');
     const limitMessageElement = document.getElementById('limit-message');
+    const noDataElement = document.getElementById('no-data');
 
     // Variable para el intervalo de actualización
     let refreshInterval;
@@ -277,11 +301,10 @@
     function formatDate(date) {
       const options = { 
         year: 'numeric', 
-        month: 'long', 
+        month: 'short', 
         day: 'numeric', 
         hour: '2-digit', 
-        minute: '2-digit',
-        second: '2-digit'
+        minute: '2-digit'
       };
       return new Date(date).toLocaleDateString('es-ES', options);
     }
@@ -352,6 +375,12 @@
       }
     }
 
+    // Función para acortar nombres largos
+    function shortenName(name, maxLength = 15) {
+      if (name.length <= maxLength) return name;
+      return name.substring(0, maxLength - 2) + '..';
+    }
+
     // Función para consolidar datos (versión mejorada)
     function consolidateData(rows) {
       const recruitersMap = new Map();
@@ -378,6 +407,10 @@
                 limitReachedRecruits.push(recruitedData.originalName);
               }
               
+              // Acortar nombres para pantallas pequeñas
+              const displayedRecruiterName = shortenName(recruiterName);
+              const displayedRecruitedName = shortenName(recruitedData.originalName);
+              
               // Agregar al mapa de reclutadores
               if (recruitersMap.has(normalizedRecruiter)) {
                 const recruiter = recruitersMap.get(normalizedRecruiter);
@@ -393,16 +426,19 @@
                 } else {
                   // Agregar nuevo reclutado
                   recruiter.recruited.push({
-                    name: recruitedData.originalName, // Usamos el nombre original
+                    name: displayedRecruitedName,
+                    originalName: recruitedData.originalName,
                     sales: recruitedData.sales
                   });
                 }
               } else {
                 // Nuevo reclutador
                 recruitersMap.set(normalizedRecruiter, {
-                  name: recruiterName, // Guardamos el nombre original
+                  name: displayedRecruiterName,
+                  originalName: recruiterName,
                   recruited: [{
-                    name: recruitedData.originalName,
+                    name: displayedRecruitedName,
+                    originalName: recruitedData.originalName,
                     sales: recruitedData.sales
                   }]
                 });
@@ -429,12 +465,21 @@
       rankingBody.innerHTML = '';
       limitMessageElement.style.display = 'none';
       
+      if (data.recruiters.length === 0) {
+        tableElement.style.display = 'none';
+        noDataElement.style.display = 'block';
+        return;
+      }
+      
+      noDataElement.style.display = 'none';
+      tableElement.style.display = 'table';
+      
       // Ordenar reclutadores alfabéticamente
-      data.recruiters.sort((a, b) => a.name.localeCompare(b.name));
+      data.recruiters.sort((a, b) => a.originalName.localeCompare(b.originalName));
       
       // Mostrar mensaje explicativo
       limitMessageElement.innerHTML = `
-        <strong>Nota:</strong> Cuando el número de ventas se muestra en <strong>verde</strong>, significa que el reclutado ya realizó sus primeras ${SALES_LIMIT} ventas y por lo tanto ha saldado su deuda con el reclutador. Los números en <strong>rojo</strong> indican que aún no alcanzan este objetivo.
+        <strong>Nota:</strong> Ventas en <strong>verde</strong> = ${SALES_LIMIT}+ ventas (deuda saldada). <strong>Rojo</strong> = aún no alcanza.
       `;
       limitMessageElement.style.display = 'block';
       
@@ -459,6 +504,7 @@
           recruiterCell.className = 'recruiter-name';
           if (index === 0) {
             recruiterCell.textContent = recruiter.name;
+            recruiterCell.title = recruiter.originalName; // Tooltip con nombre completo
           }
           row.appendChild(recruiterCell);
           
@@ -466,6 +512,7 @@
           const recruitedCell = document.createElement('td');
           recruitedCell.className = 'recruited-name';
           recruitedCell.textContent = recruited.name;
+          recruitedCell.title = recruited.originalName; // Tooltip con nombre completo
           row.appendChild(recruitedCell);
           
           // Ventas con color según el límite
@@ -487,6 +534,7 @@
         loadingElement.style.display = 'block';
         errorElement.style.display = 'none';
         tableElement.style.display = 'none';
+        noDataElement.style.display = 'none';
         refreshBtn.disabled = true;
         refreshText.textContent = 'Actualizando...';
         spinInterval = spinRefreshIcon();
@@ -502,21 +550,18 @@
         if (!json.table?.rows) throw new Error('Estructura de datos inesperada');
         
         const data = consolidateData(json.table.rows);
-        if (data.recruiters.length === 0) {
-          throw new Error('No se encontraron datos válidos');
-        }
-        
         renderRanking(data);
         
-        lastUpdatedElement.textContent = `Última actualización: ${formatDate(new Date())}`;
+        lastUpdatedElement.textContent = `Actualizado: ${formatDate(new Date())}`;
         loadingElement.style.display = 'none';
-        tableElement.style.display = 'table';
         
       } catch (error) {
         console.error('Error:', error);
         loadingElement.style.display = 'none';
         errorElement.textContent = `Error al cargar datos: ${error.message}`;
         errorElement.style.display = 'block';
+        tableElement.style.display = 'none';
+        noDataElement.style.display = 'none';
       } finally {
         if (spinInterval) clearInterval(spinInterval);
         refreshBtn.disabled = false;
