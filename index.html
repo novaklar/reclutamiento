@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Ranking de Afiliados | Novaklar</title>
+  <title>Registro y Control | Novaklar</title>
   <link href="https://fonts.googleapis.com/css2?family=Comme:wght@700&display=swap" rel="stylesheet">
   <style>
     body {
@@ -14,7 +14,7 @@
     }
 
     header {
-      background-color: #00128f;
+      background: linear-gradient(135deg, #a5246c 0%, #ef4560 50%, #f4733e 100%);
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -45,7 +45,7 @@
       font-family: 'Comme', sans-serif;
       font-size: 1.8rem;
       font-weight: 700;
-      color: #00128f;
+      color: #ef4560;
       text-align: center;
       margin: 2rem 0 1.5rem;
       padding: 0 1rem;
@@ -69,7 +69,7 @@
     }
 
     .ranking-table thead {
-      background-color: #6c91ff;
+      background-color: #a5246c;
       color: white;
     }
 
@@ -102,7 +102,7 @@
 
     .rank-number {
       font-weight: bold;
-      color: #6c91ff;
+      color: #a5246c;
       width: 40px; /* Columna más estrecha para los números */
       text-align: center;
     }
@@ -110,14 +110,21 @@
     .recruiter-name {
       font-weight: 600;
       color: #00128f;
-      width: 120px;
-      max-width: 120px;
+      width: 100px;
+      max-width: 100px;
     }
 
     .recruited-name {
       font-weight: 500;
-      width: 120px;
-      max-width: 120px;
+      width: 100px;
+      max-width: 100px;
+    }
+
+    .plan-type {
+      font-weight: 500;
+      width: 80px;
+      max-width: 80px;
+      text-align: center;
     }
 
     .sales-count {
@@ -155,7 +162,7 @@
     .last-updated {
       text-align: center;
       font-size: 0.75rem;
-      color: #6c91ff;
+      color: #a5246c;
       margin-top: 0.5rem;
       font-weight: 500;
     }
@@ -164,7 +171,7 @@
       display: block;
       margin: 1rem auto;
       padding: 0.6rem 1.2rem;
-      background-color: #6c91ff;
+      background-color: #a5246c;
       color: white;
       border: none;
       border-radius: 4px;
@@ -177,14 +184,14 @@
     }
 
     .refresh-btn:hover {
-      background-color: #5a8ce6;
+      background-color: #8a1d5a;
       transform: translateY(-2px);
       box-shadow: 0 4px 8px rgba(0,0,0,0.1);
     }
 
     .limit-message {
       background-color: #ffebee;
-      color: #ff3131;
+      color: #d32f2f;
       padding: 0.8rem;
       border-radius: 4px;
       margin: 0.5rem 0;
@@ -209,8 +216,13 @@
       
       .recruiter-name,
       .recruited-name {
-        width: 100px;
-        max-width: 100px;
+        width: 80px;
+        max-width: 80px;
+      }
+
+      .plan-type {
+        width: 60px;
+        max-width: 60px;
       }
       
       .sales-count {
@@ -238,7 +250,7 @@
     <a href="https://novaklar.github.io/web/">Regresar</a>
   </header>
 
-  <h1 class="page-title">Ranking de Afiliados</h1>
+  <h1 class="page-title">Registro y Control</h1>
 
   <div class="ranking-container">
     <div id="loading" class="loading">Cargando datos...</div>
@@ -259,6 +271,7 @@
           <th style="width: 40px;">#</th>
           <th>Reclutador</th>
           <th>Reclutado</th>
+          <th>Plan</th>
           <th>Ventas</th>
         </tr>
       </thead>
@@ -276,7 +289,7 @@
     // Configuración
     const SPREADSHEET_ID = '11jIxfO6Ah2CTRMGXXppwDoOuwC2DJJu9B3K96IW94ew';
     const SHEET_NAME = 'Form Responses 1';
-    const RANGE = 'A:C';
+    const RANGE = 'A:E'; // Actualizado para incluir las nuevas columnas
     const SALES_LIMIT = 5;
     const UPDATE_INTERVAL = 5 * 60 * 1000;
 
@@ -377,6 +390,17 @@
       }
     }
 
+    // Función para obtener el tipo de plan
+    function getPlanType(planText) {
+      if (!planText) return '5 comisiones';
+      
+      const normalized = planText.toString().toLowerCase().trim();
+      if (normalized.includes('vitalicio') || normalized.includes('vitalicia')) {
+        return 'Vitalicio';
+      }
+      return '5 comisiones';
+    }
+
     // Función para acortar nombres largos
     function shortenName(name, maxLength = 15) {
       if (name.length <= maxLength) return name;
@@ -397,6 +421,10 @@
           
           const recruitedCell = row.c[2];
           const recruitedText = recruitedCell ? String(recruitedCell.v || recruitedCell.f || '').trim() : '';
+          
+          const planCell = row.c[4]; // Nueva columna para el tipo de plan
+          const planText = planCell ? String(planCell.v || planCell.f || '').trim() : '';
+          const planType = getPlanType(planText);
           
           if (recruiterName && recruitedText) {
             const recruitedData = parseRecruitedData(recruitedText);
@@ -423,7 +451,8 @@
                   recruiter.recruited.push({
                     name: displayedRecruitedName,
                     originalName: recruitedData.originalName,
-                    sales: recruitedData.sales
+                    sales: recruitedData.sales,
+                    plan: planType
                   });
                 }
               } else {
@@ -433,7 +462,8 @@
                   recruited: [{
                     name: displayedRecruitedName,
                     originalName: recruitedData.originalName,
-                    sales: recruitedData.sales
+                    sales: recruitedData.sales,
+                    plan: planType
                   }]
                 });
               }
@@ -497,6 +527,11 @@
           recruitedCell.textContent = recruited.name;
           recruitedCell.title = recruited.originalName;
           row.appendChild(recruitedCell);
+          
+          const planCell = document.createElement('td');
+          planCell.className = 'plan-type';
+          planCell.textContent = recruited.plan;
+          row.appendChild(planCell);
           
           const salesCell = document.createElement('td');
           salesCell.className = 'sales-count';
