@@ -103,7 +103,7 @@
     .rank-number {
       font-weight: bold;
       color: #a5246c;
-      width: 40px; /* Columna más estrecha para los números */
+      width: 40px;
       text-align: center;
     }
 
@@ -202,7 +202,6 @@
       line-height: 1.4;
     }
 
-    /* Estilos para pantallas muy pequeñas */
     @media (max-width: 400px) {
       .page-title {
         font-size: 1.5rem;
@@ -235,7 +234,6 @@
       }
     }
 
-    /* Estilo para cuando no hay datos */
     .no-data {
       text-align: center;
       padding: 1rem;
@@ -289,7 +287,7 @@
     // Configuración
     const SPREADSHEET_ID = '11jIxfO6Ah2CTRMGXXppwDoOuwC2DJJu9B3K96IW94ew';
     const SHEET_NAME = 'Form Responses 1';
-    const RANGE = 'A:E'; // Actualizado para incluir las nuevas columnas
+    const RANGE = 'A:F'; // Actualizado para incluir todas las columnas hasta F
     const SALES_LIMIT = 5;
     const UPDATE_INTERVAL = 5 * 60 * 1000;
 
@@ -308,13 +306,13 @@
     // Variable para el intervalo de actualización
     let refreshInterval;
 
-    // Función para normalizar nombres (quitar tildes, convertir a minúsculas, etc.)
+    // Función para normalizar nombres
     function normalizeName(name) {
       if (!name) return '';
       
       return name.toLowerCase()
-        .normalize("NFD").replace(/[\u0300-\u036f]/g, "") // Quitar tildes
-        .replace(/[^a-z0-9áéíóúüñ\s]/g, "") // Quitar caracteres especiales
+        .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+        .replace(/[^a-z0-9áéíóúüñ\s]/g, "")
         .trim();
     }
 
@@ -341,53 +339,16 @@
       return spinInterval;
     }
 
-    // Función para parsear datos de reclutados y ventas
-    function parseRecruitedData(text) {
-      try {
-        if (!text || typeof text !== 'string') return null;
-        
-        text = text.trim()
-          .replace(/\s+/g, ' ')
-          .replace(/,/g, '.')
-          .replace(/[^a-zA-Z0-9áéíóúÁÉÍÓÚñÑüÜ\s\-\.]/g, '');
-        
-        const patterns = [
-          /^(.*?)\s*(?:-|\/|:)?\s*(\d+)$/,
-          /^(\d+)\s+(.*)$/,
-          /^([a-zA-ZáéíóúÁÉÍÓÚñÑüÜ\s]+)$/
-        ];
-        
-        let name, sales;
-        
-        for (const pattern of patterns) {
-          const match = text.match(pattern);
-          if (match) {
-            if (pattern === patterns[0]) {
-              name = match[1].trim();
-              sales = parseInt(match[2]);
-            } else if (pattern === patterns[1]) {
-              name = match[2].trim();
-              sales = parseInt(match[1]);
-            } else if (pattern === patterns[2]) {
-              name = match[1].trim();
-              sales = 1;
-            }
-            
-            if (name && name.length >= 2 && !isNaN(sales)) {
-              return { 
-                name: name, 
-                originalName: name,
-                sales: Math.max(1, sales)
-              };
-            }
-          }
-        }
-        
-        return null;
-      } catch (error) {
-        console.error('Error parsing recruited data:', text, error);
-        return null;
-      }
+    // Función para obtener el número de ventas (nueva columna específica)
+    function getSalesCount(salesCell) {
+      if (!salesCell) return 0;
+      
+      const salesText = String(salesCell.v || salesCell.f || '').trim();
+      if (!salesText) return 0;
+      
+      // Intentar convertir a número
+      const salesNumber = parseInt(salesText);
+      return isNaN(salesNumber) ? 0 : Math.max(0, salesNumber);
     }
 
     // Función para obtener el tipo de plan
@@ -420,53 +381,54 @@
           let recruiterName = recruiterCell ? String(recruiterCell.v || recruiterCell.f || '').trim() : '';
           
           const recruitedCell = row.c[2];
-          const recruitedText = recruitedCell ? String(recruitedCell.v || recruitedCell.f || '').trim() : '';
+          const recruitedName = recruitedCell ? String(recruitedCell.v || recruitedCell.f || '').trim() : '';
           
-          const planCell = row.c[4]; // Nueva columna para el tipo de plan
+          // Nueva columna específica para ventas (columna F)
+          const salesCell = row.c[5];
+          const salesCount = getSalesCount(salesCell);
+          
+          const planCell = row.c[4];
           const planText = planCell ? String(planCell.v || planCell.f || '').trim() : '';
           const planType = getPlanType(planText);
           
-          if (recruiterName && recruitedText) {
-            const recruitedData = parseRecruitedData(recruitedText);
-            if (recruitedData) {
-              const normalizedRecruiter = normalizeName(recruiterName);
+          if (recruiterName && recruitedName) {
+            const normalizedRecruiter = normalizeName(recruiterName);
+            
+            if (salesCount >= SALES_LIMIT) {
+              limitReachedRecruits.push(recruitedName);
+            }
+            
+            const displayedRecruiterName = shortenName(recruiterName);
+            const displayedRecruitedName = shortenName(recruitedName);
+            
+            if (recruitersMap.has(normalizedRecruiter)) {
+              const recruiter = recruitersMap.get(normalizedRecruiter);
               
-              if (recruitedData.sales >= SALES_LIMIT) {
-                limitReachedRecruits.push(recruitedData.originalName);
-              }
+              const normalizedRecruited = normalizeName(recruitedName);
+              const existingRecruit = recruiter.recruited.find(r => 
+                normalizeName(r.name) === normalizedRecruited);
               
-              const displayedRecruiterName = shortenName(recruiterName);
-              const displayedRecruitedName = shortenName(recruitedData.originalName);
-              
-              if (recruitersMap.has(normalizedRecruiter)) {
-                const recruiter = recruitersMap.get(normalizedRecruiter);
-                
-                const normalizedRecruited = normalizeName(recruitedData.name);
-                const existingRecruit = recruiter.recruited.find(r => 
-                  normalizeName(r.name) === normalizedRecruited);
-                
-                if (existingRecruit) {
-                  existingRecruit.sales += recruitedData.sales;
-                } else {
-                  recruiter.recruited.push({
-                    name: displayedRecruitedName,
-                    originalName: recruitedData.originalName,
-                    sales: recruitedData.sales,
-                    plan: planType
-                  });
-                }
+              if (existingRecruit) {
+                existingRecruit.sales += salesCount;
               } else {
-                recruitersMap.set(normalizedRecruiter, {
-                  name: displayedRecruiterName,
-                  originalName: recruiterName,
-                  recruited: [{
-                    name: displayedRecruitedName,
-                    originalName: recruitedData.originalName,
-                    sales: recruitedData.sales,
-                    plan: planType
-                  }]
+                recruiter.recruited.push({
+                  name: displayedRecruitedName,
+                  originalName: recruitedName,
+                  sales: salesCount,
+                  plan: planType
                 });
               }
+            } else {
+              recruitersMap.set(normalizedRecruiter, {
+                name: displayedRecruiterName,
+                originalName: recruiterName,
+                recruited: [{
+                  name: displayedRecruitedName,
+                  originalName: recruitedName,
+                  sales: salesCount,
+                  plan: planType
+                }]
+              });
             }
           }
         });
