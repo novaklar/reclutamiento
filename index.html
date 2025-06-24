@@ -5,21 +5,37 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Registro y Control | Novaklar</title>
   <link href="https://fonts.googleapis.com/css2?family=Comme:wght@700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
+    :root {
+      --primary-color: #a5246c;
+      --secondary-color: #ef4560;
+      --accent-color: #f4733e;
+      --success-color: #00bf63;
+      --warning-color: #ff3131;
+      --text-color: #333;
+      --light-bg: #f8fafc;
+      --card-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    
     body {
       margin: 0;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       background-color: white;
-      color: #333;
+      color: var(--text-color);
+      line-height: 1.5;
     }
 
     header {
-      background: linear-gradient(135deg, #a5246c 0%, #ef4560 50%, #f4733e 100%);
+      background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 50%, var(--accent-color) 100%);
       display: flex;
       justify-content: space-between;
       align-items: center;
       padding: 1rem 1.5rem;
       box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      position: sticky;
+      top: 0;
+      z-index: 100;
     }
 
     header img {
@@ -35,6 +51,9 @@
       padding: 0.5rem 1rem;
       border-radius: 4px;
       transition: background-color 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
     }
 
     header a:hover {
@@ -45,101 +64,123 @@
       font-family: 'Comme', sans-serif;
       font-size: 1.8rem;
       font-weight: 700;
-      color: #ef4560;
+      color: var(--secondary-color);
       text-align: center;
-      margin: 2rem 0 1.5rem;
+      margin: 1.5rem 0 1rem;
       padding: 0 1rem;
     }
 
-    .ranking-container {
+    .container {
       width: 100%;
+      max-width: 800px;
       margin: 0 auto;
       padding: 0 1rem 1.5rem;
       box-sizing: border-box;
     }
 
-    .ranking-table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 1rem;
-      box-shadow: 0 3px 10px rgba(0,0,0,0.1);
-      border-radius: 0.6rem;
-      overflow: hidden;
-      table-layout: fixed;
+    .stats-bar {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 1rem;
+      gap: 0.5rem;
     }
 
-    .ranking-table thead {
-      background-color: #a5246c;
-      color: white;
-    }
-
-    .ranking-table th {
-      padding: 0.8rem 0.5rem;
-      text-align: left;
-      font-weight: 600;
+    .stat-card {
+      background: white;
+      border-radius: 8px;
+      padding: 0.8rem;
+      box-shadow: var(--card-shadow);
+      flex: 1;
+      text-align: center;
       font-size: 0.9rem;
     }
 
-    .ranking-table td {
-      padding: 0.6rem 0.5rem;
-      border-bottom: 1px solid #e2e8f0;
-      font-size: 0.85rem;
-      word-wrap: break-word;
-      vertical-align: top;
+    .stat-card .value {
+      font-weight: 700;
+      font-size: 1.2rem;
+      margin-top: 0.3rem;
+      color: var(--primary-color);
     }
 
-    .ranking-table tbody tr:nth-child(even) {
-      background-color: #f8fafc;
+    .recruiter-card {
+      background: white;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+      box-shadow: var(--card-shadow);
+      overflow: hidden;
     }
 
-    .ranking-table tbody tr:last-child td {
-      border-bottom: none;
-    }
-
-    .ranking-table tbody tr:hover {
-      background-color: #f1f5f9;
-    }
-
-    .rank-number {
-      font-weight: bold;
-      color: #a5246c;
-      width: 40px;
-      text-align: center;
+    .recruiter-header {
+      background-color: var(--primary-color);
+      color: white;
+      padding: 0.8rem 1rem;
+      font-weight: 600;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
 
     .recruiter-name {
-      font-weight: 600;
-      color: #00128f;
-      width: 100px;
-      max-width: 100px;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .recruiter-rank {
+      background: white;
+      color: var(--primary-color);
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.9rem;
+    }
+
+    .recruited-item {
+      padding: 1rem;
+      border-bottom: 1px solid #eee;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .recruited-item:last-child {
+      border-bottom: none;
+    }
+
+    .recruited-info {
+      flex: 1;
     }
 
     .recruited-name {
-      font-weight: 500;
-      width: 100px;
-      max-width: 100px;
+      font-weight: 600;
+      margin-bottom: 0.3rem;
     }
 
-    .plan-type {
-      font-weight: 500;
-      width: 80px;
-      max-width: 80px;
-      text-align: center;
+    .recruited-plan {
+      font-size: 0.85rem;
+      color: #666;
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
     }
 
     .sales-count {
-      text-align: center;
-      font-weight: 600;
-      width: 60px;
+      font-weight: 700;
+      font-size: 1.1rem;
+      min-width: 50px;
+      text-align: right;
     }
 
     .sales-under-limit {
-      color: #ff3131;
+      color: var(--warning-color);
     }
 
     .sales-over-limit {
-      color: #00bf63;
-      font-weight: 700;
+      color: var(--success-color);
     }
 
     .loading {
@@ -162,25 +203,28 @@
     .last-updated {
       text-align: center;
       font-size: 0.75rem;
-      color: #a5246c;
-      margin-top: 0.5rem;
+      color: var(--primary-color);
+      margin-top: 1rem;
       font-weight: 500;
     }
 
     .refresh-btn {
-      display: block;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       margin: 1rem auto;
-      padding: 0.6rem 1.2rem;
-      background-color: #a5246c;
+      padding: 0.8rem 1.5rem;
+      background-color: var(--primary-color);
       color: white;
       border: none;
-      border-radius: 4px;
+      border-radius: 8px;
       cursor: pointer;
       transition: all 0.3s ease;
       font-weight: 600;
-      font-size: 0.9rem;
-      width: 90%;
+      font-size: 1rem;
+      width: 100%;
       max-width: 300px;
+      gap: 0.5rem;
     }
 
     .refresh-btn:hover {
@@ -189,94 +233,150 @@
       box-shadow: 0 4px 8px rgba(0,0,0,0.1);
     }
 
-    .limit-message {
-      background-color: #ffebee;
-      color: #d32f2f;
+    .legend {
+      background-color: #f8f8f8;
       padding: 0.8rem;
-      border-radius: 4px;
-      margin: 0.5rem 0;
-      font-weight: 500;
-      border-left: 4px solid #ff3131;
-      display: none;
+      border-radius: 8px;
+      margin: 1rem 0;
       font-size: 0.85rem;
-      line-height: 1.4;
+      border-left: 4px solid var(--primary-color);
     }
 
-    @media (max-width: 400px) {
-      .page-title {
-        font-size: 1.5rem;
-      }
-      
-      .ranking-table th, 
-      .ranking-table td {
-        padding: 0.5rem 0.3rem;
-        font-size: 0.8rem;
-      }
-      
-      .recruiter-name,
-      .recruited-name {
-        width: 80px;
-        max-width: 80px;
-      }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      margin-bottom: 0.3rem;
+      gap: 0.5rem;
+    }
 
-      .plan-type {
-        width: 60px;
-        max-width: 60px;
-      }
-      
-      .sales-count {
-        width: 50px;
-      }
-      
-      .limit-message {
-        font-size: 0.8rem;
-        padding: 0.7rem;
-      }
+    .legend-color {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+    }
+
+    .legend-success {
+      background-color: var(--success-color);
+    }
+
+    .legend-warning {
+      background-color: var(--warning-color);
     }
 
     .no-data {
       text-align: center;
-      padding: 1rem;
+      padding: 2rem;
       color: #666;
       font-style: italic;
+      background: white;
+      border-radius: 8px;
+      box-shadow: var(--card-shadow);
+    }
+
+    .filter-controls {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .filter-btn {
+      flex: 1;
+      padding: 0.6rem;
+      border: 1px solid #ddd;
+      background: white;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.85rem;
+      transition: all 0.2s;
+    }
+
+    .filter-btn.active {
+      background: var(--primary-color);
+      color: white;
+      border-color: var(--primary-color);
+    }
+
+    @media (max-width: 600px) {
+      .page-title {
+        font-size: 1.5rem;
+        margin: 1rem 0;
+      }
+      
+      .stats-bar {
+        flex-direction: column;
+      }
+      
+      .recruited-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+      }
+      
+      .sales-count {
+        text-align: left;
+        width: 100%;
+        padding-top: 0.5rem;
+        border-top: 1px dashed #eee;
+      }
+      
+      .filter-controls {
+        flex-direction: column;
+      }
     }
   </style>
 </head>
 <body>
   <header>
     <img src="https://raw.githubusercontent.com/novaklar/web/refs/heads/main/Novaklar.svg" alt="Novaklar Logo" />
-    <a href="https://novaklar.github.io/web/">Regresar</a>
+    <a href="https://novaklar.github.io/web/"><i class="fas fa-arrow-left"></i> Regresar</a>
   </header>
 
   <h1 class="page-title">Registro y Control</h1>
 
-  <div class="ranking-container">
+  <div class="container">
     <div id="loading" class="loading">Cargando datos...</div>
     <div id="error" class="error-message" style="display: none;"></div>
     
-    <button id="refresh-btn" class="refresh-btn">
-      <span id="refresh-text">Actualizar ahora</span>
-      <span id="refresh-icon" style="margin-left: 5px;">↻</span>
-    </button>
-    
-    <div id="limit-message" class="limit-message">
-      <strong>Nota:</strong> Cuando el número de ventas se muestra en <strong>verde</strong>, significa que el reclutado ya realizó sus primeras 5 ventas y por lo tanto ha saldado su deuda con el reclutador. Los números en <strong>rojo</strong> indican que aún no alcanzan este objetivo.
+    <div class="stats-bar" id="stats-bar" style="display: none;">
+      <div class="stat-card">
+        <div>Reclutadores</div>
+        <div class="value" id="recruiters-count">0</div>
+      </div>
+      <div class="stat-card">
+        <div>Reclutados</div>
+        <div class="value" id="recruited-count">0</div>
+      </div>
+      <div class="stat-card">
+        <div>Completados</div>
+        <div class="value" id="completed-count">0</div>
+      </div>
     </div>
     
-    <table class="ranking-table" id="ranking-table" style="display: none;">
-      <thead>
-        <tr>
-          <th style="width: 40px;">#</th>
-          <th>Reclutador</th>
-          <th>Reclutado</th>
-          <th>Plan</th>
-          <th>Ventas</th>
-        </tr>
-      </thead>
-      <tbody id="ranking-body">
-        <!-- Los datos se cargarán aquí con JavaScript -->
-      </tbody>
-    </table>
+    <div class="filter-controls" id="filter-controls" style="display: none;">
+      <button class="filter-btn active" data-filter="all">Todos</button>
+      <button class="filter-btn" data-filter="completed">Completados</button>
+      <button class="filter-btn" data-filter="pending">Pendientes</button>
+    </div>
+    
+    <div class="legend">
+      <div class="legend-item">
+        <div class="legend-color legend-success"></div>
+        <div>5+ ventas (deuda saldada)</div>
+      </div>
+      <div class="legend-item">
+        <div class="legend-color legend-warning"></div>
+        <div>Menos de 5 ventas</div>
+      </div>
+    </div>
+    
+    <button id="refresh-btn" class="refresh-btn">
+      <i class="fas fa-sync-alt" id="refresh-icon"></i>
+      <span id="refresh-text">Actualizar ahora</span>
+    </button>
+    
+    <div id="recruiters-container">
+      <!-- Los datos se cargarán aquí con JavaScript -->
+    </div>
     
     <div id="no-data" class="no-data" style="display: none;">No hay datos disponibles</div>
     
@@ -287,24 +387,29 @@
     // Configuración
     const SPREADSHEET_ID = '11jIxfO6Ah2CTRMGXXppwDoOuwC2DJJu9B3K96IW94ew';
     const SHEET_NAME = 'Form Responses 1';
-    const RANGE = 'A:F'; // Actualizado para incluir todas las columnas hasta F
+    const RANGE = 'A:F';
     const SALES_LIMIT = 5;
     const UPDATE_INTERVAL = 5 * 60 * 1000;
 
     // Elementos del DOM
-    const rankingBody = document.getElementById('ranking-body');
+    const recruitersContainer = document.getElementById('recruiters-container');
     const loadingElement = document.getElementById('loading');
     const errorElement = document.getElementById('error');
-    const tableElement = document.getElementById('ranking-table');
     const lastUpdatedElement = document.getElementById('last-updated');
     const refreshBtn = document.getElementById('refresh-btn');
     const refreshText = document.getElementById('refresh-text');
     const refreshIcon = document.getElementById('refresh-icon');
-    const limitMessageElement = document.getElementById('limit-message');
     const noDataElement = document.getElementById('no-data');
+    const statsBar = document.getElementById('stats-bar');
+    const recruitersCountElement = document.getElementById('recruiters-count');
+    const recruitedCountElement = document.getElementById('recruited-count');
+    const completedCountElement = document.getElementById('completed-count');
+    const filterControls = document.getElementById('filter-controls');
+    const filterButtons = document.querySelectorAll('.filter-btn');
 
-    // Variable para el intervalo de actualización
-    let refreshInterval;
+    // Variables de estado
+    let currentFilter = 'all';
+    let allRecruitersData = [];
 
     // Función para normalizar nombres
     function normalizeName(name) {
@@ -339,14 +444,13 @@
       return spinInterval;
     }
 
-    // Función para obtener el número de ventas (nueva columna específica)
+    // Función para obtener el número de ventas
     function getSalesCount(salesCell) {
       if (!salesCell) return 0;
       
       const salesText = String(salesCell.v || salesCell.f || '').trim();
       if (!salesText) return 0;
       
-      // Intentar convertir a número
       const salesNumber = parseInt(salesText);
       return isNaN(salesNumber) ? 0 : Math.max(0, salesNumber);
     }
@@ -362,16 +466,11 @@
       return '5 comisiones';
     }
 
-    // Función para acortar nombres largos
-    function shortenName(name, maxLength = 15) {
-      if (name.length <= maxLength) return name;
-      return name.substring(0, maxLength - 2) + '..';
-    }
-
     // Función para consolidar datos
     function consolidateData(rows) {
       const recruitersMap = new Map();
-      let limitReachedRecruits = [];
+      let totalRecruited = 0;
+      let totalCompleted = 0;
       
       try {
         rows.forEach(row => {
@@ -383,7 +482,6 @@
           const recruitedCell = row.c[2];
           const recruitedName = recruitedCell ? String(recruitedCell.v || recruitedCell.f || '').trim() : '';
           
-          // Nueva columna específica para ventas (columna F)
           const salesCell = row.c[5];
           const salesCount = getSalesCount(salesCell);
           
@@ -392,14 +490,10 @@
           const planType = getPlanType(planText);
           
           if (recruiterName && recruitedName) {
+            totalRecruited++;
+            if (salesCount >= SALES_LIMIT) totalCompleted++;
+            
             const normalizedRecruiter = normalizeName(recruiterName);
-            
-            if (salesCount >= SALES_LIMIT) {
-              limitReachedRecruits.push(recruitedName);
-            }
-            
-            const displayedRecruiterName = shortenName(recruiterName);
-            const displayedRecruitedName = shortenName(recruitedName);
             
             if (recruitersMap.has(normalizedRecruiter)) {
               const recruiter = recruitersMap.get(normalizedRecruiter);
@@ -409,24 +503,23 @@
                 normalizeName(r.name) === normalizedRecruited);
               
               if (existingRecruit) {
-                existingRecruit.sales += salesCount;
+                existingRecruit.sales = Math.max(existingRecruit.sales, salesCount);
               } else {
                 recruiter.recruited.push({
-                  name: displayedRecruitedName,
-                  originalName: recruitedName,
+                  name: recruitedName,
                   sales: salesCount,
-                  plan: planType
+                  plan: planType,
+                  completed: salesCount >= SALES_LIMIT
                 });
               }
             } else {
               recruitersMap.set(normalizedRecruiter, {
-                name: displayedRecruiterName,
-                originalName: recruiterName,
+                name: recruiterName,
                 recruited: [{
-                  name: displayedRecruitedName,
-                  originalName: recruitedName,
+                  name: recruitedName,
                   sales: salesCount,
-                  plan: planType
+                  plan: planType,
+                  completed: salesCount >= SALES_LIMIT
                 }]
               });
             }
@@ -435,74 +528,130 @@
         
         return {
           recruiters: Array.from(recruitersMap.values()),
-          limitReachedRecruits: limitReachedRecruits
+          stats: {
+            totalRecruiters: recruitersMap.size,
+            totalRecruited: totalRecruited,
+            totalCompleted: totalCompleted
+          }
         };
       } catch (error) {
         console.error('Error consolidating data:', error);
         return {
           recruiters: [],
-          limitReachedRecruits: []
+          stats: {
+            totalRecruiters: 0,
+            totalRecruited: 0,
+            totalCompleted: 0
+          }
         };
       }
     }
 
     // Función para renderizar el ranking
     function renderRanking(data) {
-      rankingBody.innerHTML = '';
+      allRecruitersData = data.recruiters;
+      applyFilter();
       
-      if (data.recruiters.length === 0) {
-        tableElement.style.display = 'none';
+      // Actualizar estadísticas
+      recruitersCountElement.textContent = data.stats.totalRecruiters;
+      recruitedCountElement.textContent = data.stats.totalRecruited;
+      completedCountElement.textContent = data.stats.totalCompleted;
+      
+      statsBar.style.display = 'flex';
+      filterControls.style.display = 'flex';
+    }
+
+    // Función para aplicar el filtro seleccionado
+    function applyFilter() {
+      recruitersContainer.innerHTML = '';
+      
+      if (allRecruitersData.length === 0) {
         noDataElement.style.display = 'block';
         return;
       }
       
       noDataElement.style.display = 'none';
-      tableElement.style.display = 'table';
       
-      data.recruiters.sort((a, b) => a.originalName.localeCompare(b.originalName));
+      // Ordenar reclutadores alfabéticamente
+      const sortedRecruiters = [...allRecruitersData].sort((a, b) => a.name.localeCompare(b.name));
       
-      limitMessageElement.style.display = 'block';
-      
-      data.recruiters.forEach(recruiter => {
-        recruiter.recruited.sort((a, b) => b.sales - a.sales);
+      sortedRecruiters.forEach((recruiter, index) => {
+        // Filtrar reclutados según el filtro seleccionado
+        let recruitedToShow = recruiter.recruited;
         
-        recruiter.recruited.forEach((recruited, index) => {
-          const row = document.createElement('tr');
+        if (currentFilter === 'completed') {
+          recruitedToShow = recruiter.recruited.filter(r => r.completed);
+        } else if (currentFilter === 'pending') {
+          recruitedToShow = recruiter.recruited.filter(r => !r.completed);
+        }
+        
+        // Si no hay reclutados que mostrar con este filtro, saltar
+        if (recruitedToShow.length === 0) return;
+        
+        // Ordenar reclutados por ventas (mayor a menor)
+        recruitedToShow.sort((a, b) => b.sales - a.sales);
+        
+        const recruiterCard = document.createElement('div');
+        recruiterCard.className = 'recruiter-card';
+        
+        const recruiterHeader = document.createElement('div');
+        recruiterHeader.className = 'recruiter-header';
+        
+        const recruiterNameDiv = document.createElement('div');
+        recruiterNameDiv.className = 'recruiter-name';
+        
+        const rankSpan = document.createElement('span');
+        rankSpan.className = 'recruiter-rank';
+        rankSpan.textContent = index + 1;
+        
+        const nameSpan = document.createElement('span');
+        nameSpan.textContent = recruiter.name;
+        
+        recruiterNameDiv.appendChild(rankSpan);
+        recruiterNameDiv.appendChild(nameSpan);
+        
+        const countSpan = document.createElement('span');
+        countSpan.textContent = `${recruitedToShow.length} reclutado${recruitedToShow.length !== 1 ? 's' : ''}`;
+        
+        recruiterHeader.appendChild(recruiterNameDiv);
+        recruiterHeader.appendChild(countSpan);
+        
+        recruiterCard.appendChild(recruiterHeader);
+        
+        recruitedToShow.forEach(recruited => {
+          const recruitedItem = document.createElement('div');
+          recruitedItem.className = 'recruited-item';
           
-          const rankCell = document.createElement('td');
-          rankCell.className = 'rank-number';
-          if (index === 0) {
-            rankCell.textContent = data.recruiters.indexOf(recruiter) + 1;
-          }
-          row.appendChild(rankCell);
+          const recruitedInfo = document.createElement('div');
+          recruitedInfo.className = 'recruited-info';
           
-          const recruiterCell = document.createElement('td');
-          recruiterCell.className = 'recruiter-name';
-          if (index === 0) {
-            recruiterCell.textContent = recruiter.name;
-            recruiterCell.title = recruiter.originalName;
-          }
-          row.appendChild(recruiterCell);
+          const nameDiv = document.createElement('div');
+          nameDiv.className = 'recruited-name';
+          nameDiv.textContent = recruited.name;
           
-          const recruitedCell = document.createElement('td');
-          recruitedCell.className = 'recruited-name';
-          recruitedCell.textContent = recruited.name;
-          recruitedCell.title = recruited.originalName;
-          row.appendChild(recruitedCell);
+          const planDiv = document.createElement('div');
+          planDiv.className = 'recruited-plan';
           
-          const planCell = document.createElement('td');
-          planCell.className = 'plan-type';
-          planCell.textContent = recruited.plan;
-          row.appendChild(planCell);
+          const planIcon = document.createElement('i');
+          planIcon.className = recruited.plan === 'Vitalicio' ? 'fas fa-infinity' : 'fas fa-hashtag';
           
-          const salesCell = document.createElement('td');
-          salesCell.className = 'sales-count';
-          salesCell.textContent = recruited.sales;
-          salesCell.classList.add(recruited.sales >= SALES_LIMIT ? 'sales-over-limit' : 'sales-under-limit');
-          row.appendChild(salesCell);
+          planDiv.appendChild(planIcon);
+          planDiv.appendChild(document.createTextNode(recruited.plan));
           
-          rankingBody.appendChild(row);
+          recruitedInfo.appendChild(nameDiv);
+          recruitedInfo.appendChild(planDiv);
+          
+          const salesDiv = document.createElement('div');
+          salesDiv.className = `sales-count ${recruited.completed ? 'sales-over-limit' : 'sales-under-limit'}`;
+          salesDiv.textContent = recruited.sales;
+          
+          recruitedItem.appendChild(recruitedInfo);
+          recruitedItem.appendChild(salesDiv);
+          
+          recruiterCard.appendChild(recruitedItem);
         });
+        
+        recruitersContainer.appendChild(recruiterCard);
       });
     }
 
@@ -512,8 +661,10 @@
       try {
         loadingElement.style.display = 'block';
         errorElement.style.display = 'none';
-        tableElement.style.display = 'none';
         noDataElement.style.display = 'none';
+        statsBar.style.display = 'none';
+        filterControls.style.display = 'none';
+        recruitersContainer.innerHTML = '';
         refreshBtn.disabled = true;
         refreshText.textContent = 'Actualizando...';
         spinInterval = spinRefreshIcon();
@@ -539,8 +690,9 @@
         loadingElement.style.display = 'none';
         errorElement.textContent = `Error al cargar datos: ${error.message}`;
         errorElement.style.display = 'block';
-        tableElement.style.display = 'none';
         noDataElement.style.display = 'none';
+        statsBar.style.display = 'none';
+        filterControls.style.display = 'none';
       } finally {
         if (spinInterval) clearInterval(spinInterval);
         refreshBtn.disabled = false;
@@ -549,21 +701,28 @@
       }
     }
 
+    // Eventos de filtrado
+    filterButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        filterButtons.forEach(btn => btn.classList.remove('active'));
+        button.classList.add('active');
+        currentFilter = button.dataset.filter;
+        applyFilter();
+      });
+    });
+
     // Inicia la actualización automática
     function startAutoRefresh() {
       loadDataFromSheets();
-      refreshInterval = setInterval(loadDataFromSheets, UPDATE_INTERVAL);
+      return setInterval(loadDataFromSheets, UPDATE_INTERVAL);
     }
 
     // Evento para actualización manual
+    let refreshInterval = startAutoRefresh();
     refreshBtn.addEventListener('click', () => {
       clearInterval(refreshInterval);
-      loadDataFromSheets();
-      startAutoRefresh();
+      refreshInterval = startAutoRefresh();
     });
-
-    // Inicia al cargar la página
-    document.addEventListener('DOMContentLoaded', startAutoRefresh);
   </script>
 </body>
 </html>
