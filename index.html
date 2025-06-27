@@ -466,11 +466,10 @@
       return '5 comisiones';
     }
 
-    // Función para consolidar datos
+    // Función para consolidar datos (CORREGIDA)
     function consolidateData(rows) {
       const recruitersMap = new Map();
       let totalRecruited = 0;
-      let totalCompleted = 0;
       
       try {
         rows.forEach(row => {
@@ -491,19 +490,20 @@
           
           if (recruiterName && recruitedName) {
             totalRecruited++;
-            if (salesCount >= SALES_LIMIT) totalCompleted++;
             
             const normalizedRecruiter = normalizeName(recruiterName);
+            const normalizedRecruited = normalizeName(recruitedName);
             
             if (recruitersMap.has(normalizedRecruiter)) {
               const recruiter = recruitersMap.get(normalizedRecruiter);
               
-              const normalizedRecruited = normalizeName(recruitedName);
               const existingRecruit = recruiter.recruited.find(r => 
                 normalizeName(r.name) === normalizedRecruited);
               
               if (existingRecruit) {
-                existingRecruit.sales = Math.max(existingRecruit.sales, salesCount);
+                // CORRECCIÓN: Sumar las ventas en lugar de tomar el máximo
+                existingRecruit.sales += salesCount;
+                existingRecruit.completed = existingRecruit.sales >= SALES_LIMIT;
               } else {
                 recruiter.recruited.push({
                   name: recruitedName,
@@ -524,6 +524,16 @@
               });
             }
           }
+        });
+        
+        // Recalcular totalCompleted después de consolidar todas las ventas
+        let totalCompleted = 0;
+        recruitersMap.forEach(recruiter => {
+          recruiter.recruited.forEach(recruited => {
+            if (recruited.sales >= SALES_LIMIT) {
+              totalCompleted++;
+            }
+          });
         });
         
         return {
