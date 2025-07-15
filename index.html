@@ -16,6 +16,7 @@
       --text-color: #333;
       --light-bg: #f8fafc;
       --card-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      --money-color: #147a80; /* Cambiado a #147a80 */
     }
     
     body {
@@ -306,6 +307,18 @@
       font-weight: 600;
     }
 
+    .money-earned {
+      font-weight: 700;
+      color: var(--money-color); /* Usando el color primario */
+      font-size: 0.9rem;
+      margin-top: 0.5rem;
+    }
+
+    .recruiter-earnings {
+      font-weight: 600;
+      color: var(--secondary-color);
+    }
+
     @media (max-width: 600px) {
       .page-title {
         font-size: 1.5rem;
@@ -369,10 +382,6 @@
         <div>Reclutados</div>
         <div class="value" id="recruited-count">0</div>
       </div>
-      <div class="stat-card">
-        <div>Completados</div>
-        <div class="value" id="completed-count">0</div>
-      </div>
     </div>
     
     <div class="filter-controls" id="filter-controls" style="display: none;">
@@ -389,6 +398,10 @@
       <div class="legend-item">
         <div class="legend-color legend-warning"></div>
         <div>Menos de 5 ventas</div>
+      </div>
+      <div class="legend-item">
+        <i class="fas fa-hashtag" style="color: var(--accent-color); width: 16px;"></i>
+        <div>Vitalicio = $500 | 5 comisiones = $1,000</div>
       </div>
     </div>
     
@@ -413,6 +426,10 @@
     const RANGE = 'A:F';
     const SALES_LIMIT = 5;
     const UPDATE_INTERVAL = 5 * 60 * 1000;
+    const PRICES = {
+      'Vitalicio': 500,
+      '5 comisiones': 1000
+    };
 
     // Elementos del DOM
     const recruitersContainer = document.getElementById('recruiters-container');
@@ -426,7 +443,6 @@
     const statsBar = document.getElementById('stats-bar');
     const recruitersCountElement = document.getElementById('recruiters-count');
     const recruitedCountElement = document.getElementById('recruited-count');
-    const completedCountElement = document.getElementById('completed-count');
     const filterControls = document.getElementById('filter-controls');
     const filterButtons = document.querySelectorAll('.filter-btn');
 
@@ -454,6 +470,11 @@
         minute: '2-digit'
       };
       return new Date(date).toLocaleDateString('es-ES', options);
+    }
+
+    // Función para formatear dinero
+    function formatMoney(amount) {
+      return '$' + amount.toLocaleString('es-MX');
     }
 
     // Función para animar el icono de actualización
@@ -489,7 +510,12 @@
       return '5 comisiones';
     }
 
-    // Función para consolidar datos (CORREGIDA)
+    // Función para calcular las ganancias por reclutado
+    function calculateEarnings(recruited) {
+      return recruited.sales * PRICES[recruited.plan];
+    }
+
+    // Función para consolidar datos
     function consolidateData(rows) {
       const recruitersMap = new Map();
       let totalRecruited = 0;
@@ -524,38 +550,46 @@
                 normalizeName(r.name) === normalizedRecruited);
               
               if (existingRecruit) {
-                // CORRECCIÓN: Sumar las ventas en lugar de tomar el máximo
                 existingRecruit.sales += salesCount;
                 existingRecruit.completed = existingRecruit.sales >= SALES_LIMIT;
+                existingRecruit.earnings = calculateEarnings(existingRecruit);
               } else {
-                recruiter.recruited.push({
+                const newRecruited = {
                   name: recruitedName,
                   sales: salesCount,
                   plan: planType,
                   completed: salesCount >= SALES_LIMIT
-                });
+                };
+                newRecruited.earnings = calculateEarnings(newRecruited);
+                recruiter.recruited.push(newRecruited);
               }
             } else {
+              const newRecruited = {
+                name: recruitedName,
+                sales: salesCount,
+                plan: planType,
+                completed: salesCount >= SALES_LIMIT
+              };
+              newRecruited.earnings = calculateEarnings(newRecruited);
+              
               recruitersMap.set(normalizedRecruiter, {
                 name: recruiterName,
-                recruited: [{
-                  name: recruitedName,
-                  sales: salesCount,
-                  plan: planType,
-                  completed: salesCount >= SALES_LIMIT
-                }]
+                recruited: [newRecruited],
+                totalEarnings: 0
               });
             }
           }
         });
         
-        // Recalcular totalCompleted después de consolidar todas las ventas
+        // Calcular totales
         let totalCompleted = 0;
         recruitersMap.forEach(recruiter => {
+          recruiter.totalEarnings = 0;
           recruiter.recruited.forEach(recruited => {
             if (recruited.sales >= SALES_LIMIT) {
               totalCompleted++;
             }
+            recruiter.totalEarnings += recruited.earnings;
           });
         });
         
@@ -588,7 +622,6 @@
       // Actualizar estadísticas
       recruitersCountElement.textContent = data.stats.totalRecruiters;
       recruitedCountElement.textContent = data.stats.totalRecruited;
-      completedCountElement.textContent = data.stats.totalCompleted;
       
       statsBar.style.display = 'flex';
       filterControls.style.display = 'flex';
@@ -646,8 +679,14 @@
         const countSpan = document.createElement('span');
         countSpan.textContent = `${recruitedToShow.length} reclutado${recruitedToShow.length !== 1 ? 's' : ''}`;
         
+        // Añadir ganancias totales del reclutador junto al nombre
+        const earningsSpan = document.createElement('span');
+        earningsSpan.className = 'recruiter-earnings';
+        earningsSpan.textContent = formatMoney(recruiter.totalEarnings);
+        
         recruiterHeader.appendChild(recruiterNameDiv);
         recruiterHeader.appendChild(countSpan);
+        recruiterHeader.appendChild(earningsSpan);
         
         recruiterCard.appendChild(recruiterHeader);
         
@@ -680,6 +719,13 @@
           
           recruitedItem.appendChild(recruitedInfo);
           recruitedItem.appendChild(salesDiv);
+          
+          // Añadir ganancias por reclutado
+          const earningsDiv = document.createElement('div');
+          earningsDiv.className = 'money-earned';
+          earningsDiv.textContent = formatMoney(recruited.earnings);
+          
+          recruitedInfo.appendChild(earningsDiv);
           
           recruiterCard.appendChild(recruitedItem);
         });
