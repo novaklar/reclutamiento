@@ -1,328 +1,761 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Onboarding Afiliados | Novaklar</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Registro y Control | Novaklar</title>
+  <link href="https://fonts.googleapis.com/css2?family=Comme:wght@700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <link rel="stylesheet" href="style.css">
+  <style>
+    :root {
+      --primary-color: #147a80;
+      --secondary-color: #bbe7e6;
+      --accent-color: #0d5257;
+      --success-color: #00bf63;
+      --warning-color: #ff3131;
+      --text-color: #333;
+      --light-bg: #f8fafc;
+      --card-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: white;
+      color: var(--text-color);
+      line-height: 1.5;
+    }
+
+    header {
+      background: linear-gradient(135deg, var(--primary-color) 0%, var(--accent-color) 100%);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 1.5rem;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    header img {
+      height: 40px;
+      filter: brightness(0) invert(1);
+    }
+
+    header a {
+      text-decoration: none;
+      color: white;
+      font-weight: 600;
+      font-size: 1rem;
+      padding: 0.5rem 1rem;
+      border-radius: 4px;
+      transition: background-color 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    header a:hover {
+      background-color: rgba(255,255,255,0.2);
+    }
+
+    .page-title {
+      font-family: 'Comme', sans-serif;
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: var(--primary-color);
+      text-align: center;
+      margin: 1.5rem 0 1rem;
+      padding: 0 1rem;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 0 1rem 1.5rem;
+      box-sizing: border-box;
+    }
+
+    .stats-bar {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 1.5rem;
+      gap: 0.5rem;
+      border-radius: 8px;
+      padding: 0;
+    }
+
+    .stat-card {
+      background: white;
+      border-radius: 8px;
+      padding: 0.8rem;
+      box-shadow: var(--card-shadow);
+      flex: 1;
+      text-align: center;
+      font-size: 0.9rem;
+      border: 1px solid rgba(0,0,0,0.05);
+    }
+
+    .stat-card .value {
+      font-weight: 700;
+      font-size: 1.2rem;
+      margin-top: 0.3rem;
+      color: var(--primary-color);
+    }
+
+    .recruiter-card {
+      background: white;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+      box-shadow: var(--card-shadow);
+      overflow: hidden;
+      border: 1px solid rgba(0,0,0,0.05);
+    }
+
+    .recruiter-header {
+      background-color: var(--primary-color);
+      color: white;
+      padding: 0.8rem 1rem;
+      font-weight: 600;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .recruiter-name {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .recruiter-rank {
+      background: var(--secondary-color);
+      color: var(--primary-color);
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.9rem;
+    }
+
+    .recruited-item {
+      padding: 1rem;
+      border-bottom: 1px solid #eee;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .recruited-item:last-child {
+      border-bottom: none;
+    }
+
+    .recruited-info {
+      flex: 1;
+    }
+
+    .recruited-name {
+      font-weight: 600;
+      margin-bottom: 0.3rem;
+    }
+
+    .recruited-plan {
+      font-size: 0.85rem;
+      color: var(--accent-color);
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+
+    .sales-count {
+      font-weight: 700;
+      font-size: 1.1rem;
+      min-width: 50px;
+      text-align: right;
+    }
+
+    .sales-under-limit {
+      color: var(--warning-color);
+    }
+
+    .sales-over-limit {
+      color: var(--success-color);
+    }
+
+    .loading {
+      text-align: center;
+      padding: 2rem;
+      font-style: italic;
+      color: #666;
+    }
+
+    .error-message {
+      color: #d32f2f;
+      background-color: #fde8e8;
+      padding: 1rem;
+      border-radius: 4px;
+      margin: 1rem 0;
+      text-align: center;
+      font-size: 0.9rem;
+    }
+
+    .last-updated {
+      text-align: center;
+      font-size: 0.75rem;
+      color: var(--primary-color);
+      margin-top: 1rem;
+      font-weight: 500;
+    }
+
+    .refresh-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 1.5rem auto;
+      padding: 0.8rem 1.5rem;
+      background-color: var(--primary-color);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-weight: 600;
+      font-size: 1rem;
+      width: 100%;
+      max-width: 300px;
+      gap: 0.5rem;
+    }
+
+    .refresh-btn:hover {
+      background-color: var(--accent-color);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+
+    .legend {
+      background-color: white;
+      padding: 0.8rem;
+      border-radius: 8px;
+      margin: 1.5rem 0;
+      font-size: 0.85rem;
+      border: 1px solid rgba(0,0,0,0.05);
+      box-shadow: var(--card-shadow);
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      margin-bottom: 0.3rem;
+      gap: 0.5rem;
+    }
+
+    .legend-color {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+    }
+
+    .legend-success {
+      background-color: var(--success-color);
+    }
+
+    .legend-warning {
+      background-color: var(--warning-color);
+    }
+
+    .no-data {
+      text-align: center;
+      padding: 2rem;
+      color: #666;
+      font-style: italic;
+      background: white;
+      border-radius: 8px;
+      box-shadow: var(--card-shadow);
+      border: 1px solid rgba(0,0,0,0.05);
+    }
+
+    .filter-controls {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 1.5rem;
+      padding: 0;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: var(--card-shadow);
+    }
+
+    .filter-btn {
+      flex: 1;
+      padding: 0.6rem;
+      background: white;
+      border: none;
+      cursor: pointer;
+      font-size: 0.85rem;
+      transition: all 0.2s;
+      border-bottom: 2px solid transparent;
+    }
+
+    .filter-btn.active {
+      color: var(--primary-color);
+      border-bottom: 2px solid var(--primary-color);
+      font-weight: 600;
+    }
+
+    @media (max-width: 600px) {
+      .page-title {
+        font-size: 1.5rem;
+        margin: 1rem 0;
+      }
+      
+      .stats-bar {
+        flex-direction: column;
+        gap: 0.8rem;
+      }
+      
+      .recruited-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+      }
+      
+      .sales-count {
+        text-align: left;
+        width: 100%;
+        padding-top: 0.5rem;
+        border-top: 1px dashed #eee;
+      }
+      
+      .filter-controls {
+        flex-direction: row;
+        overflow-x: auto;
+        padding-bottom: 0.5rem;
+        -webkit-overflow-scrolling: touch;
+      }
+      
+      .filter-btn {
+        min-width: 100px;
+        white-space: nowrap;
+      }
+      
+      .legend {
+        margin: 1rem 0;
+      }
+    }
+  </style>
 </head>
 <body>
-  <div class="onboarding-container" id="onboardingContainer">
-    <!-- Slide 1: Bienvenida -->
-    <div class="slide">
-      <div class="slide-content">
-        <div class="logo-container">
-          <img src="https://raw.githubusercontent.com/novaklar/web/refs/heads/main/Novaklar.svg" alt="Novaklar Logo" class="logo-white">
-        </div>
-        <h1 class="slide-title">¡Bienvenido a Novaklar!</h1>
-        <p class="slide-description">
-          La plataforma que transforma la forma de generar ingresos en línea
-        </p>
-        <button class="btn" onclick="nextSlide()">
-          Comenzar <i class="fas fa-arrow-right"></i>
-        </button>
+  <header>
+    <img src="https://raw.githubusercontent.com/novaklar/web/refs/heads/main/Novaklar.svg" alt="Novaklar Logo" />
+    <a href="https://novaklar.github.io/web/"><i class="fas fa-arrow-left"></i> Regresar</a>
+  </header>
+
+  <h1 class="page-title">Registro y Control</h1>
+
+  <div class="container">
+    <div id="loading" class="loading">Cargando datos...</div>
+    <div id="error" class="error-message" style="display: none;"></div>
+    
+    <div class="stats-bar" id="stats-bar" style="display: none;">
+      <div class="stat-card">
+        <div>Reclutadores</div>
+        <div class="value" id="recruiters-count">0</div>
+      </div>
+      <div class="stat-card">
+        <div>Reclutados</div>
+        <div class="value" id="recruited-count">0</div>
+      </div>
+      <div class="stat-card">
+        <div>Completados</div>
+        <div class="value" id="completed-count">0</div>
       </div>
     </div>
-
-    <!-- Slide 2: Información Novaklar -->
-    <div class="slide">
-      <div class="slide-content">
-        <h1 class="slide-title">¿Qué es Novaklar?</h1>
-        <div class="scrollable-content">
-          <p class="justified">Novaklar es una empresa digital que transforma la forma de generar ingresos en línea. Desde 2023, hemos creado una comunidad que conecta a personas con oportunidades reales y accesibles, ofreciendo productos digitales como streaming, recargas, suscripciones y mucho más.</p>
-          
-          <p class="justified">Nuestro modelo de trabajo es flexible, inclusivo y pensado especialmente para jóvenes, estudiantes y universitarios que buscan un ingreso pasivo. Puedes ser revendedor, promotor o reclutador, sin necesidad de inversión previa. En novaklar, creces a tu ritmo y con el respaldo de un equipo comprometido.</p>
-          
-          <p class="justified">Es el complemento perfecto para personas con trabajos estables que buscan aumentar sus ingresos. Creemos en el poder de la tecnología para cambiar vidas, y cada día trabajamos para que más personas descubran su potencial en el mundo digital.</p>
-        </div>
-        <button class="btn" onclick="nextSlide()">
-          Continuar <i class="fas fa-arrow-right"></i>
-        </button>
+    
+    <div class="filter-controls" id="filter-controls" style="display: none;">
+      <button class="filter-btn active" data-filter="all">Todos</button>
+      <button class="filter-btn" data-filter="completed">Completados</button>
+      <button class="filter-btn" data-filter="pending">Pendientes</button>
+    </div>
+    
+    <div class="legend">
+      <div class="legend-item">
+        <div class="legend-color legend-success"></div>
+        <div>5+ ventas (deuda saldada)</div>
+      </div>
+      <div class="legend-item">
+        <div class="legend-color legend-warning"></div>
+        <div>Menos de 5 ventas</div>
       </div>
     </div>
-
-    <!-- Slide 3: Video Presentación -->
-    <div class="slide">
-      <div class="slide-content">
-        <h1 class="slide-title">Conoce Novaklar</h1>
-        <div class="video-container">
-          <iframe src="https://www.youtube.com/embed/RGXrXUhM9kU" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-        </div>
-        <button class="btn" onclick="nextSlide()">
-          Ver Roles <i class="fas fa-arrow-right"></i>
-        </button>
-      </div>
+    
+    <button id="refresh-btn" class="refresh-btn">
+      <i class="fas fa-sync-alt" id="refresh-icon"></i>
+      <span id="refresh-text">Actualizar ahora</span>
+    </button>
+    
+    <div id="recruiters-container">
+      <!-- Los datos se cargarán aquí con JavaScript -->
     </div>
-
-    <!-- Slide 4: Revendedor -->
-    <div class="slide">
-      <div class="slide-content">
-        <h1 class="slide-title"><i class="fas fa-store"></i> Revendedor</h1>
-        <div class="scrollable-content">
-          <p class="justified">Vende productos digitales directamente al cliente sin necesidad de invertir previamente. Solo pagas cuando ya tienes una venta confirmada, lo que elimina cualquier riesgo financiero inicial.</p>
-          
-          <p class="justified">Gestionas tus propias ventas y estableces relaciones directas con tus clientes. Tienes control completo sobre tus márgenes de ganancia.</p>
-          
-          <div class="highlight-box">
-            <strong>Ejemplo práctico:</strong> Si un cliente compra una cuenta de HBO Max por $10.000, tú la adquieres por $5.000 y ganas $5.000 de ganancia inmediata sin tener que comprar el producto por adelantado.
-          </div>
-          
-          <h3 class="section-title">Sistema de Pagos</h3>
-          <p class="justified">Como revendedor, recibes el pago directamente de tus clientes. Con una parte de ese dinero adquieres el producto en nuestra plataforma para entregarlo a tu cliente, quedándote con tu ganancia.</p>
-          
-          <ul class="benefits-list">
-            <li><i class="fas fa-check-circle"></i> Sin inversión inicial</li>
-            <li><i class="fas fa-check-circle"></i> Margen de ganancia del 50% en promedio</li>
-            <li><i class="fas fa-check-circle"></i> Control total de tus ventas</li>
-            <li><i class="fas fa-check-circle"></i> Productos digitales de alta demanda</li>
-          </ul>
-        </div>
-        <button class="btn" onclick="nextSlide()">
-          Siguiente Rol <i class="fas fa-arrow-right"></i>
-        </button>
-      </div>
-    </div>
-
-    <!-- Slide 5: Promotor -->
-    <div class="slide">
-      <div class="slide-content">
-        <h1 class="slide-title"><i class="fas fa-bullhorn"></i> Promotor</h1>
-        <div class="scrollable-content">
-          <p class="justified">Promociona productos a través de enlaces o redes sociales sin necesidad de manejar el proceso de venta completo. Ideal para quienes tienen audiencia digital o habilidades en marketing.</p>
-          
-          <p class="justified">Ganas comisiones por cada venta generada a través de tus enlaces únicos. No necesitas atender consultas ni procesar pagos, todo es automático.</p>
-          
-          <div class="highlight-box">
-            <strong>Ejemplo práctico:</strong> Si alguien compra Amazon Prime por $10.000 desde tu catálogo o enlace de afiliado, recibes $4.000 de comisión automáticamente, sin tener que atender consultas o procesar pagos.
-          </div>
-          
-          <h3 class="section-title">Sistema de Pagos</h3>
-          <p class="justified">Como promotor, recibes tus comisiones diariamente directamente en tu cuenta bancaria (Nequi, Daviplata, Bancolombia, etc.). Los pagos se procesan automáticamente por cada venta generada.</p>
-          
-          <ul class="benefits-list">
-            <li><i class="fas fa-check-circle"></i> Comisiones automáticas</li>
-            <li><i class="fas fa-check-circle"></i> Sin atención al cliente</li>
-            <li><i class="fas fa-check-circle"></i> Ideal para redes sociales</li>
-            <li><i class="fas fa-check-circle"></i> Herramientas de seguimiento</li>
-          </ul>
-        </div>
-        <button class="btn" onclick="nextSlide()">
-          Siguiente Rol <i class="fas fa-arrow-right"></i>
-        </button>
-      </div>
-    </div>
-
-    <!-- Slide 6: Reclutador -->
-    <div class="slide">
-      <div class="slide-content">
-        <h1 class="slide-title"><i class="fas fa-users"></i> Reclutador</h1>
-        <div class="scrollable-content">
-          <p class="justified">Amplía la red Novaklar invitando a nuevas personas y gana comisiones por sus primeras ventas. Perfecto para networkers y personas con amplios círculos sociales.</p>
-          
-          <p class="justified">Tu ingreso crece a medida que ayudas a otros a comenzar su camino en el mundo digital. Obtienes bonos por reclutamiento y porcentajes de las ventas de tu red.</p>
-          
-          <div class="highlight-box">
-            <strong>Ejemplo práctico:</strong> Si reclutas a Laura y ella vende una cuenta de Paramount por $10.000, tú ganas una comisión por esa venta y por las cuatro siguientes que realice, creando así un flujo de ingresos recurrente.
-          </div>
-          
-          <h3 class="section-title">Sistema de Pagos</h3>
-          <p class="justified">Como reclutador, recibes comisiones diarias cada vez que uno de tus reclutados realice una venta. Los pagos se envían automáticamente a tu cuenta bancaria registrada.</p>
-          
-          <ul class="benefits-list">
-            <li><i class="fas fa-check-circle"></i> Ingresos recurrentes</li>
-            <li><i class="fas fa-check-circle"></i> Bonos por reclutamiento</li>
-            <li><i class="fas fa-check-circle"></i> Crecimiento exponencial</li>
-            <li><i class="fas fa-check-circle"></i> Capacitación para tu equipo</li>
-          </ul>
-        </div>
-        <button class="btn" onclick="nextSlide()">
-          Modelo de Negocio <i class="fas fa-arrow-right"></i>
-        </button>
-      </div>
-    </div>
-
-    <!-- Slide 7: Modelo de Negocio -->
-    <div class="slide">
-      <div class="slide-content">
-        <h1 class="slide-title">Modelo de Negocio</h1>
-        <div class="scrollable-content">
-          <p class="justified">Cada rol dentro de Novaklar opera con un enfoque distinto. Estos son los tres modelos que usamos:</p>
-          
-          <div class="business-model-card">
-            <div class="model-icon"><i class="fas fa-store"></i></div>
-            <h3>Modelo de Reventa Directa (Revendedores)</h3>
-            <p>Compran productos a precio interno y los venden al cliente final con ganancia propia. Ellos gestionan el cobro y la entrega.</p>
-            <p class="model-highlight">Ingresos controlados 100% por el revendedor.</p>
-          </div>
-          
-          <div class="business-model-card">
-            <div class="model-icon"><i class="fas fa-bullhorn"></i></div>
-            <h3>Modelo de Afiliación por Comisión (Promotores)</h3>
-            <p>Promocionan catálogos o enlaces y ganan una comisión por cada venta generada.</p>
-            <p class="model-highlight">No manejan dinero del cliente. Reciben pagos diarios por medios digitales.</p>
-          </div>
-          
-          <div class="business-model-card">
-            <div class="model-icon"><i class="fas fa-users"></i></div>
-            <h3>Modelo de Red de Afiliados (Reclutadores)</h3>
-            <p>Invitan a nuevas personas y reciben comisiones cada vez que uno de sus afiliados hace una venta.</p>
-            <p class="model-highlight">Ingresos escalables según el rendimiento de su red.</p>
-          </div>
-        </div>
-        <button class="btn" onclick="nextSlide()">
-          Requisitos <i class="fas fa-arrow-right"></i>
-        </button>
-      </div>
-    </div>
-
-    <!-- Slide 8: Requisitos -->
-    <div class="slide">
-      <div class="slide-content">
-        <h1 class="slide-title">Requisitos para ingresar</h1>
-        <div class="scrollable-content">
-          <p class="justified">¿Qué necesitas para trabajar con Novaklar?</p>
-          
-          <ul class="requirements-list">
-            <li><i class="fas fa-check-circle"></i> Tener mínimo 14 años</li>
-            <li><i class="fas fa-check-circle"></i> Vivir en Colombia</li>
-            <li><i class="fas fa-check-circle"></i> Tener una cuenta activa en Nequi, Daviplata, Bancolombia o Movii</li>
-            <li><i class="fas fa-check-circle"></i> Ser responsable, respetuoso y cumplido con los clientes</li>
-          </ul>
-          
-          <div class="highlight-box">
-            <p>No necesitas experiencia previa ni invertir dinero. ¡Solo ganas y compromiso!</p>
-          </div>
-
-          <div class="images-grid">
-            <img src="https://raw.githubusercontent.com/novaklar/reclutamiento/refs/heads/main/17_20250714_172109_0001.png" alt="Requisitos Novaklar">
-            <img src="https://raw.githubusercontent.com/novaklar/reclutamiento/refs/heads/main/18_20250714_172109_0002.png" alt="Requisitos Novaklar">
-            <img src="https://raw.githubusercontent.com/novaklar/reclutamiento/refs/heads/main/22098a32-f4be-4049-a2db-67174d1461b5.jpeg" alt="Requisitos Novaklar">
-            <img src="https://raw.githubusercontent.com/novaklar/reclutamiento/refs/heads/main/7f3c157a-fef7-4275-8bb0-acaea1791090.jpeg" alt="Requisitos Novaklar">
-          </div>
-        </div>
-        <button class="btn" onclick="openModal()">
-          Acceder a Capacitación <i class="fas fa-graduation-cap"></i>
-        </button>
-      </div>
-    </div>
-
-    <!-- Slide 9: Capacitación -->
-    <div class="slide">
-      <div class="slide-content">
-        <h1 class="slide-title">Capacitación</h1>
-        <div class="scrollable-content">
-          <p class="justified">Aprende todo lo necesario para tener éxito en tu rol con nuestro programa completo de capacitación:</p>
-          
-          <div class="video-container" id="trainingVideoContainer">
-            <!-- El video se mostrará aquí después de pasar el modal -->
-          </div>
-        </div>
-        <button class="btn" onclick="nextSlide()">
-          Finalizar <i class="fas fa-arrow-right"></i>
-        </button>
-      </div>
-    </div>
-
-    <!-- Slide 10: Finalizar -->
-    <div class="slide">
-      <div class="slide-content">
-        <h1 class="slide-title">¡Estás listo para comenzar!</h1>
-        <div class="scrollable-content">
-          <div class="audio-container">
-            <audio controls autoplay>
-              <source src="https://raw.githubusercontent.com/novaklar/reclutamiento/main/luvvoice.com-20250714-KGWYSW.mp3" type="audio/mpeg">
-              Tu navegador no soporta el elemento de audio.
-            </audio>
-          </div>
-          
-          <p class="justified">Contáctanos ahora mismo para comenzar tu proceso de afiliación:</p>
-          
-          <div class="contacts-grid">
-            <a href="https://wa.me/573216495733" class="contact-btn whatsapp-btn" target="_blank">
-              <i class="fab fa-whatsapp"></i> Ester
-            </a>
-            
-            <a href="https://wa.me/573027069328" class="contact-btn whatsapp-btn" target="_blank">
-              <i class="fab fa-whatsapp"></i> Katherin
-            </a>
-            
-            <a href="https://wa.me/573025697553" class="contact-btn whatsapp-btn" target="_blank">
-              <i class="fab fa-whatsapp"></i> Gabriela
-            </a>
-            
-            <a href="https://wa.me/573027069188" class="contact-btn whatsapp-btn" target="_blank">
-              <i class="fab fa-whatsapp"></i> Neyereht
-            </a>
-          </div>
-        </div>
-      </div>
-    </div>
+    
+    <div id="no-data" class="no-data" style="display: none;">No hay datos disponibles</div>
+    
+    <div id="last-updated" class="last-updated"></div>
   </div>
 
-  <!-- Navegación -->
-  <div class="navigation">
-    <button class="nav-btn active" onclick="goToSlide(0)"></button>
-    <button class="nav-btn" onclick="goToSlide(1)"></button>
-    <button class="nav-btn" onclick="goToSlide(2)"></button>
-    <button class="nav-btn" onclick="goToSlide(3)"></button>
-    <button class="nav-btn" onclick="goToSlide(4)"></button>
-    <button class="nav-btn" onclick="goToSlide(5)"></button>
-    <button class="nav-btn" onclick="goToSlide(6)"></button>
-    <button class="nav-btn" onclick="goToSlide(7)"></button>
-    <button class="nav-btn" onclick="goToSlide(8)"></button>
-    <button class="nav-btn" onclick="goToSlide(9)"></button>
-  </div>
+  <script>
+    // Configuración
+    const SPREADSHEET_ID = '11jIxfO6Ah2CTRMGXXppwDoOuwC2DJJu9B3K96IW94ew';
+    const SHEET_NAME = 'Form Responses 1';
+    const RANGE = 'A:F';
+    const SALES_LIMIT = 5;
+    const UPDATE_INTERVAL = 5 * 60 * 1000;
 
-  <!-- Modal de confirmación -->
-  <div class="modal-overlay" id="modalOverlay">
-    <div class="modal">
-      <div class="modal-header">
-        <div class="modal-icon"><i class="fas fa-graduation-cap"></i></div>
-        <h2 class="modal-title">Confirmar Acceso</h2>
-      </div>
-      <p class="modal-text">
-        Para acceder a la capacitación, confirma que:
-      </p>
-      
-      <div class="checkbox-group">
-        <div class="checkbox-item">
-          <input type="checkbox" id="confirmInfo" onchange="checkConditions()">
-          <label for="confirmInfo">He revisado toda la información</label>
-        </div>
-        
-        <div class="checkbox-item">
-          <input type="checkbox" id="confirmRole" onchange="checkConditions()">
-          <label for="confirmRole">He seleccionado un rol</label>
-        </div>
-      </div>
-      
-      <button class="btn modal-btn" id="modalContinueBtn" disabled onclick="continueToTraining()">
-        ✅ Acceder a Capacitación
-      </button>
-      
-      <p class="contacts-title">¿Necesitas ayuda?</p>
-      
-      <div class="contacts-grid">
-        <a href="https://wa.me/573216495733" class="contact-btn whatsapp-btn" target="_blank">
-          <i class="fab fa-whatsapp"></i> Ester
-        </a>
-        
-        <a href="https://wa.me/573027069328" class="contact-btn whatsapp-btn" target="_blank">
-          <i class="fab fa-whatsapp"></i> Katherin
-        </a>
-        
-        <a href="https://wa.me/573025697553" class="contact-btn whatsapp-btn" target="_blank">
-          <i class="fab fa-whatsapp"></i> Gabriela
-        </a>
-        
-        <a href="https://wa.me/573027069188" class="contact-btn whatsapp-btn" target="_blank">
-          <i class="fab fa-whatsapp"></i> Neyereht
-        </a>
-      </div>
-    </div>
-  </div>
+    // Elementos del DOM
+    const recruitersContainer = document.getElementById('recruiters-container');
+    const loadingElement = document.getElementById('loading');
+    const errorElement = document.getElementById('error');
+    const lastUpdatedElement = document.getElementById('last-updated');
+    const refreshBtn = document.getElementById('refresh-btn');
+    const refreshText = document.getElementById('refresh-text');
+    const refreshIcon = document.getElementById('refresh-icon');
+    const noDataElement = document.getElementById('no-data');
+    const statsBar = document.getElementById('stats-bar');
+    const recruitersCountElement = document.getElementById('recruiters-count');
+    const recruitedCountElement = document.getElementById('recruited-count');
+    const completedCountElement = document.getElementById('completed-count');
+    const filterControls = document.getElementById('filter-controls');
+    const filterButtons = document.querySelectorAll('.filter-btn');
 
-  <script src="script.js"></script>
+    // Variables de estado
+    let currentFilter = 'all';
+    let allRecruitersData = [];
+
+    // Función para normalizar nombres
+    function normalizeName(name) {
+      if (!name) return '';
+      
+      return name.toLowerCase()
+        .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+        .replace(/[^a-z0-9áéíóúüñ\s]/g, "")
+        .trim();
+    }
+
+    // Función para formatear la fecha
+    function formatDate(date) {
+      const options = { 
+        year: 'numeric', 
+        month: 'short', 
+        day: 'numeric', 
+        hour: '2-digit', 
+        minute: '2-digit'
+      };
+      return new Date(date).toLocaleDateString('es-ES', options);
+    }
+
+    // Función para animar el icono de actualización
+    function spinRefreshIcon() {
+      let rotation = 0;
+      const spinInterval = setInterval(() => {
+        rotation += 30;
+        if (rotation >= 360) rotation = 0;
+        refreshIcon.style.transform = `rotate(${rotation}deg)`;
+      }, 50);
+      return spinInterval;
+    }
+
+    // Función para obtener el número de ventas
+    function getSalesCount(salesCell) {
+      if (!salesCell) return 0;
+      
+      const salesText = String(salesCell.v || salesCell.f || '').trim();
+      if (!salesText) return 0;
+      
+      const salesNumber = parseInt(salesText);
+      return isNaN(salesNumber) ? 0 : Math.max(0, salesNumber);
+    }
+
+    // Función para obtener el tipo de plan
+    function getPlanType(planText) {
+      if (!planText) return '5 comisiones';
+      
+      const normalized = planText.toString().toLowerCase().trim();
+      if (normalized.includes('vitalicio') || normalized.includes('vitalicia')) {
+        return 'Vitalicio';
+      }
+      return '5 comisiones';
+    }
+
+    // Función para consolidar datos (CORREGIDA)
+    function consolidateData(rows) {
+      const recruitersMap = new Map();
+      let totalRecruited = 0;
+      
+      try {
+        rows.forEach(row => {
+          if (!row.c || !Array.isArray(row.c)) return;
+          
+          const recruiterCell = row.c[1];
+          let recruiterName = recruiterCell ? String(recruiterCell.v || recruiterCell.f || '').trim() : '';
+          
+          const recruitedCell = row.c[2];
+          const recruitedName = recruitedCell ? String(recruitedCell.v || recruitedCell.f || '').trim() : '';
+          
+          const salesCell = row.c[5];
+          const salesCount = getSalesCount(salesCell);
+          
+          const planCell = row.c[4];
+          const planText = planCell ? String(planCell.v || planCell.f || '').trim() : '';
+          const planType = getPlanType(planText);
+          
+          if (recruiterName && recruitedName) {
+            totalRecruited++;
+            
+            const normalizedRecruiter = normalizeName(recruiterName);
+            const normalizedRecruited = normalizeName(recruitedName);
+            
+            if (recruitersMap.has(normalizedRecruiter)) {
+              const recruiter = recruitersMap.get(normalizedRecruiter);
+              
+              const existingRecruit = recruiter.recruited.find(r => 
+                normalizeName(r.name) === normalizedRecruited);
+              
+              if (existingRecruit) {
+                // CORRECCIÓN: Sumar las ventas en lugar de tomar el máximo
+                existingRecruit.sales += salesCount;
+                existingRecruit.completed = existingRecruit.sales >= SALES_LIMIT;
+              } else {
+                recruiter.recruited.push({
+                  name: recruitedName,
+                  sales: salesCount,
+                  plan: planType,
+                  completed: salesCount >= SALES_LIMIT
+                });
+              }
+            } else {
+              recruitersMap.set(normalizedRecruiter, {
+                name: recruiterName,
+                recruited: [{
+                  name: recruitedName,
+                  sales: salesCount,
+                  plan: planType,
+                  completed: salesCount >= SALES_LIMIT
+                }]
+              });
+            }
+          }
+        });
+        
+        // Recalcular totalCompleted después de consolidar todas las ventas
+        let totalCompleted = 0;
+        recruitersMap.forEach(recruiter => {
+          recruiter.recruited.forEach(recruited => {
+            if (recruited.sales >= SALES_LIMIT) {
+              totalCompleted++;
+            }
+          });
+        });
+        
+        return {
+          recruiters: Array.from(recruitersMap.values()),
+          stats: {
+            totalRecruiters: recruitersMap.size,
+            totalRecruited: totalRecruited,
+            totalCompleted: totalCompleted
+          }
+        };
+      } catch (error) {
+        console.error('Error consolidating data:', error);
+        return {
+          recruiters: [],
+          stats: {
+            totalRecruiters: 0,
+            totalRecruited: 0,
+            totalCompleted: 0
+          }
+        };
+      }
+    }
+
+    // Función para renderizar el ranking
+    function renderRanking(data) {
+      allRecruitersData = data.recruiters;
+      applyFilter();
+      
+      // Actualizar estadísticas
+      recruitersCountElement.textContent = data.stats.totalRecruiters;
+      recruitedCountElement.textContent = data.stats.totalRecruited;
+      completedCountElement.textContent = data.stats.totalCompleted;
+      
+      statsBar.style.display = 'flex';
+      filterControls.style.display = 'flex';
+    }
+
+    // Función para aplicar el filtro seleccionado
+    function applyFilter() {
+      recruitersContainer.innerHTML = '';
+      
+      if (allRecruitersData.length === 0) {
+        noDataElement.style.display = 'block';
+        return;
+      }
+      
+      noDataElement.style.display = 'none';
+      
+      // Ordenar reclutadores alfabéticamente
+      const sortedRecruiters = [...allRecruitersData].sort((a, b) => a.name.localeCompare(b.name));
+      
+      sortedRecruiters.forEach((recruiter, index) => {
+        // Filtrar reclutados según el filtro seleccionado
+        let recruitedToShow = recruiter.recruited;
+        
+        if (currentFilter === 'completed') {
+          recruitedToShow = recruiter.recruited.filter(r => r.completed);
+        } else if (currentFilter === 'pending') {
+          recruitedToShow = recruiter.recruited.filter(r => !r.completed);
+        }
+        
+        // Si no hay reclutados que mostrar con este filtro, saltar
+        if (recruitedToShow.length === 0) return;
+        
+        // Ordenar reclutados por ventas (mayor a menor)
+        recruitedToShow.sort((a, b) => b.sales - a.sales);
+        
+        const recruiterCard = document.createElement('div');
+        recruiterCard.className = 'recruiter-card';
+        
+        const recruiterHeader = document.createElement('div');
+        recruiterHeader.className = 'recruiter-header';
+        
+        const recruiterNameDiv = document.createElement('div');
+        recruiterNameDiv.className = 'recruiter-name';
+        
+        const rankSpan = document.createElement('span');
+        rankSpan.className = 'recruiter-rank';
+        rankSpan.textContent = index + 1;
+        
+        const nameSpan = document.createElement('span');
+        nameSpan.textContent = recruiter.name;
+        
+        recruiterNameDiv.appendChild(rankSpan);
+        recruiterNameDiv.appendChild(nameSpan);
+        
+        const countSpan = document.createElement('span');
+        countSpan.textContent = `${recruitedToShow.length} reclutado${recruitedToShow.length !== 1 ? 's' : ''}`;
+        
+        recruiterHeader.appendChild(recruiterNameDiv);
+        recruiterHeader.appendChild(countSpan);
+        
+        recruiterCard.appendChild(recruiterHeader);
+        
+        recruitedToShow.forEach(recruited => {
+          const recruitedItem = document.createElement('div');
+          recruitedItem.className = 'recruited-item';
+          
+          const recruitedInfo = document.createElement('div');
+          recruitedInfo.className = 'recruited-info';
+          
+          const nameDiv = document.createElement('div');
+          nameDiv.className = 'recruited-name';
+          nameDiv.textContent = recruited.name;
+          
+          const planDiv = document.createElement('div');
+          planDiv.className = 'recruited-plan';
+          
+          const planIcon = document.createElement('i');
+          planIcon.className = recruited.plan === 'Vitalicio' ? 'fas fa-infinity' : 'fas fa-hashtag';
+          
+          planDiv.appendChild(planIcon);
+          planDiv.appendChild(document.createTextNode(recruited.plan));
+          
+          recruitedInfo.appendChild(nameDiv);
+          recruitedInfo.appendChild(planDiv);
+          
+          const salesDiv = document.createElement('div');
+          salesDiv.className = `sales-count ${recruited.completed ? 'sales-over-limit' : 'sales-under-limit'}`;
+          salesDiv.textContent = recruited.sales;
+          
+          recruitedItem.appendChild(recruitedInfo);
+          recruitedItem.appendChild(salesDiv);
+          
+          recruiterCard.appendChild(recruitedItem);
+        });
+        
+        recruitersContainer.appendChild(recruiterCard);
+      });
+    }
+
+    // Función para cargar datos desde Google Sheets
+    async function loadDataFromSheets() {
+      let spinInterval;
+      try {
+        loadingElement.style.display = 'block';
+        errorElement.style.display = 'none';
+        noDataElement.style.display = 'none';
+        statsBar.style.display = 'none';
+        filterControls.style.display = 'none';
+        recruitersContainer.innerHTML = '';
+        refreshBtn.disabled = true;
+        refreshText.textContent = 'Actualizando...';
+        spinInterval = spinRefreshIcon();
+        
+        const url = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?sheet=${encodeURIComponent(SHEET_NAME)}&range=${RANGE}&t=${new Date().getTime()}`;
+        
+        const response = await fetch(url);
+        if (!response.ok) throw new Error(`Error ${response.status}`);
+        
+        const text = await response.text();
+        const json = JSON.parse(text.substring(47).slice(0, -2));
+        
+        if (!json.table?.rows) throw new Error('Estructura de datos inesperada');
+        
+        const data = consolidateData(json.table.rows);
+        renderRanking(data);
+        
+        lastUpdatedElement.textContent = `Actualizado: ${formatDate(new Date())}`;
+        loadingElement.style.display = 'none';
+        
+      } catch (error) {
+        console.error('Error:', error);
+        loadingElement.style.display = 'none';
+        errorElement.textContent = `Error al cargar datos: ${error.message}`;
+        errorElement.style.display = 'block';
+        noDataElement.style.display = 'none';
+        statsBar.style.display = 'none';
+        filterControls.style.display = 'none';
+      } finally {
+        if (spinInterval) clearInterval(spinInterval);
+        refreshBtn.disabled = false;
+        refreshText.textContent = 'Actualizar ahora';
+        refreshIcon.style.transform = 'rotate(0deg)';
+      }
+    }
+
+    // Eventos de filtrado
+    filterButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        filterButtons.forEach(btn => btn.classList.remove('active'));
+        button.classList.add('active');
+        currentFilter = button.dataset.filter;
+        applyFilter();
+      });
+    });
+
+    // Inicia la actualización automática
+    function startAutoRefresh() {
+      loadDataFromSheets();
+      return setInterval(loadDataFromSheets, UPDATE_INTERVAL);
+    }
+
+    // Evento para actualización manual
+    let refreshInterval = startAutoRefresh();
+    refreshBtn.addEventListener('click', () => {
+      clearInterval(refreshInterval);
+      refreshInterval = startAutoRefresh();
+    });
+  </script>
 </body>
 </html>
