@@ -319,6 +319,58 @@
       color: var(--secondary-color);
     }
 
+    .search-container {
+      margin-bottom: 1.5rem;
+      position: relative;
+      width: 100%;
+      max-width: 800px;
+      margin-left: auto;
+      margin-right: auto;
+      padding: 0 1rem;
+      box-sizing: border-box;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 0.8rem 1rem 0.8rem 2.5rem;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      box-shadow: var(--card-shadow);
+      transition: all 0.3s;
+    }
+
+    .search-input:focus {
+      outline: none;
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 2px rgba(20, 122, 128, 0.2);
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 1.5rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #777;
+    }
+
+    .clear-search {
+      position: absolute;
+      right: 1.5rem;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      color: #777;
+      cursor: pointer;
+      font-size: 1rem;
+      display: none;
+    }
+
+    .clear-search:hover {
+      color: var(--warning-color);
+    }
+
     @media (max-width: 600px) {
       .page-title {
         font-size: 1.5rem;
@@ -358,6 +410,22 @@
       .legend {
         margin: 1rem 0;
       }
+      
+      .search-input {
+        padding-left: 2.2rem;
+      }
+      
+      .search-icon {
+        left: 1.3rem;
+      }
+      
+      .clear-search {
+        right: 1.3rem;
+      }
+      
+      .search-container {
+        padding: 0 0.8rem;
+      }
     }
   </style>
 </head>
@@ -382,6 +450,14 @@
         <div>Reclutados</div>
         <div class="value" id="recruited-count">0</div>
       </div>
+    </div>
+    
+    <div class="search-container" id="search-container" style="display: none;">
+      <i class="fas fa-search search-icon"></i>
+      <input type="text" id="search-input" class="search-input" placeholder="Buscar reclutador...">
+      <button id="clear-search" class="clear-search" title="Limpiar búsqueda">
+        <i class="fas fa-times"></i>
+      </button>
     </div>
     
     <div class="filter-controls" id="filter-controls" style="display: none;">
@@ -445,10 +521,14 @@
     const recruitedCountElement = document.getElementById('recruited-count');
     const filterControls = document.getElementById('filter-controls');
     const filterButtons = document.querySelectorAll('.filter-btn');
+    const searchContainer = document.getElementById('search-container');
+    const searchInput = document.getElementById('search-input');
+    const clearSearchBtn = document.getElementById('clear-search');
 
     // Variables de estado
     let currentFilter = 'all';
     let allRecruitersData = [];
+    let currentSearchTerm = '';
 
     // Función para normalizar nombres
     function normalizeName(name) {
@@ -614,6 +694,17 @@
       }
     }
 
+    // Función para filtrar reclutadores por término de búsqueda
+    function filterRecruitersBySearch(recruiters, searchTerm) {
+      if (!searchTerm) return recruiters;
+      
+      const normalizedSearch = normalizeName(searchTerm);
+      return recruiters.filter(recruiter => {
+        const normalizedName = normalizeName(recruiter.name);
+        return normalizedName.includes(normalizedSearch);
+      });
+    }
+
     // Función para renderizar el ranking
     function renderRanking(data) {
       allRecruitersData = data.recruiters;
@@ -624,6 +715,7 @@
       recruitedCountElement.textContent = data.stats.totalRecruited;
       
       statsBar.style.display = 'flex';
+      searchContainer.style.display = 'block';
       filterControls.style.display = 'flex';
     }
 
@@ -638,8 +730,11 @@
       
       noDataElement.style.display = 'none';
       
+      // Filtrar por término de búsqueda
+      let filteredRecruiters = filterRecruitersBySearch(allRecruitersData, currentSearchTerm);
+      
       // Ordenar reclutadores alfabéticamente
-      const sortedRecruiters = [...allRecruitersData].sort((a, b) => a.name.localeCompare(b.name));
+      const sortedRecruiters = [...filteredRecruiters].sort((a, b) => a.name.localeCompare(b.name));
       
       sortedRecruiters.forEach((recruiter, index) => {
         // Filtrar reclutados según el filtro seleccionado
@@ -732,6 +827,14 @@
         
         recruitersContainer.appendChild(recruiterCard);
       });
+      
+      // Mostrar mensaje si no hay resultados de búsqueda
+      if (sortedRecruiters.length === 0 && currentSearchTerm) {
+        const noResults = document.createElement('div');
+        noResults.className = 'no-data';
+        noResults.textContent = `No se encontraron reclutadores con "${currentSearchTerm}"`;
+        recruitersContainer.appendChild(noResults);
+      }
     }
 
     // Función para cargar datos desde Google Sheets
@@ -742,6 +845,7 @@
         errorElement.style.display = 'none';
         noDataElement.style.display = 'none';
         statsBar.style.display = 'none';
+        searchContainer.style.display = 'none';
         filterControls.style.display = 'none';
         recruitersContainer.innerHTML = '';
         refreshBtn.disabled = true;
@@ -771,6 +875,7 @@
         errorElement.style.display = 'block';
         noDataElement.style.display = 'none';
         statsBar.style.display = 'none';
+        searchContainer.style.display = 'none';
         filterControls.style.display = 'none';
       } finally {
         if (spinInterval) clearInterval(spinInterval);
@@ -788,6 +893,24 @@
         currentFilter = button.dataset.filter;
         applyFilter();
       });
+    });
+
+    // Eventos de búsqueda
+    searchInput.addEventListener('input', (e) => {
+      currentSearchTerm = e.target.value.trim();
+      if (currentSearchTerm) {
+        clearSearchBtn.style.display = 'block';
+      } else {
+        clearSearchBtn.style.display = 'none';
+      }
+      applyFilter();
+    });
+
+    clearSearchBtn.addEventListener('click', () => {
+      searchInput.value = '';
+      currentSearchTerm = '';
+      clearSearchBtn.style.display = 'none';
+      applyFilter();
     });
 
     // Inicia la actualización automática
