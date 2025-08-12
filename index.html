@@ -28,7 +28,7 @@
     }
 
     header {
-      background: linear-gradient(135deg, var(--secondary-color) 0%, var(--primary-color) 100%);
+      background-color: var(--primary-color);
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -41,7 +41,7 @@
 
     header img {
       height: 40px;
-      filter: brightness(0) invert(1);
+      filter: brightness(0) invert(1) sepia(1) hue-rotate(85deg) saturate(300%) brightness(1.2);
     }
 
     header a {
