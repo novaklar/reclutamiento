@@ -284,7 +284,6 @@
       display: flex;
       gap: 0.5rem;
       margin-bottom: 1.5rem;
-      padding: 0;
       border-radius: 8px;
       overflow: hidden;
       box-shadow: var(--card-shadow);
@@ -338,6 +337,7 @@
       font-size: 0.9rem;
       box-shadow: var(--card-shadow);
       transition: all 0.3s;
+      box-sizing: border-box;
     }
 
     .search-input:focus {
@@ -416,15 +416,11 @@
       }
       
       .search-icon {
-        left: 1.3rem;
+        left: 1.2rem;
       }
-      
+
       .clear-search {
-        right: 1.3rem;
-      }
-      
-      .search-container {
-        padding: 0 0.8rem;
+        right: 1.2rem;
       }
     }
   </style>
