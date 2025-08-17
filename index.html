@@ -587,6 +587,7 @@
               
               if (existingRecruit) {
                 existingRecruit.sales += salesCount;
+                // CORRECCIÓN: Usar existingRecruit en lugar de existingRecruited
                 existingRecruit.completed = existingRecruit.sales >= SALES_LIMIT;
                 existingRecruit.earnings = calculateEarnings(existingRecruit);
               } else {
@@ -671,18 +672,52 @@
       let filteredRecruiters = [...allRecruitersData];
       const normalizedSearchTerm = normalizeName(searchTerm);
 
-      // Si hay un término de búsqueda, filtramos por él.
+      // Si hay un término de búsqueda, filtramos por él y creamos una nueva lista
+      // de reclutadores que contengan resultados.
       if (normalizedSearchTerm) {
-        filteredRecruiters = filteredRecruiters.filter(recruiter => {
-          const recruiterNameMatch = normalizeName(recruiter.name).includes(normalizedSearchTerm);
-          const recruitedMatch = recruiter.recruited.some(recruited =>
+        filteredRecruiters = filteredRecruiters.map(recruiter => {
+          // Filtrar reclutados que coincidan con el término de búsqueda
+          const matchingRecruited = recruiter.recruited.filter(recruited => 
             normalizeName(recruited.name).includes(normalizedSearchTerm)
           );
-          return recruiterNameMatch || recruitedMatch;
-        });
+          
+          // Si el nombre del reclutador coincide, o si hay reclutados que coinciden,
+          // devolvemos un nuevo objeto con solo los reclutados coincidentes.
+          if (normalizeName(recruiter.name).includes(normalizedSearchTerm) || matchingRecruited.length > 0) {
+            return {
+              ...recruiter,
+              // Mantenemos los reclutados que coinciden con el término de búsqueda,
+              // o todos si el nombre del reclutador coincidió.
+              recruited: normalizeName(recruiter.name).includes(normalizedSearchTerm) ? recruiter.recruited : matchingRecruited
+            };
+          }
+          return null;
+        }).filter(Boolean); // Eliminar los reclutadores nulos (que no coincidieron)
       }
+      
+      // Aplicamos los filtros de estado (Completados/Pendientes) a la lista resultante
+      // de reclutadores después de la búsqueda.
+      let finalRecruiters = filteredRecruiters.map(recruiter => {
+          let recruitedToShow = [...recruiter.recruited];
+          
+          if (currentFilter === 'completed') {
+            recruitedToShow = recruitedToShow.filter(r => r.completed);
+          } else if (currentFilter === 'pending') {
+            recruitedToShow = recruitedToShow.filter(r => !r.completed);
+          }
+          
+          // Si no hay reclutados que mostrar con este filtro, no incluimos este reclutador
+          if (recruitedToShow.length === 0) return null;
+          
+          return {
+              ...recruiter,
+              recruited: recruitedToShow
+          };
+      }).filter(Boolean); // Eliminar los reclutadores nulos (que no tienen reclutados después del filtro de estado)
 
-      if (filteredRecruiters.length === 0) {
+
+      // Si después del filtro de búsqueda no hay resultados, mostramos el mensaje.
+      if (finalRecruiters.length === 0) {
         noDataElement.style.display = 'block';
         return;
       }
@@ -690,27 +725,10 @@
       noDataElement.style.display = 'none';
       
       // Ordenar reclutadores alfabéticamente
-      const sortedRecruiters = filteredRecruiters.sort((a, b) => a.name.localeCompare(b.name));
+      const sortedRecruiters = finalRecruiters.sort((a, b) => a.name.localeCompare(b.name));
       
       sortedRecruiters.forEach((recruiter, index) => {
         let recruitedToShow = recruiter.recruited;
-        
-        // Filtrar reclutados según el filtro seleccionado
-        if (currentFilter === 'completed') {
-          recruitedToShow = recruitedToShow.filter(r => r.completed);
-        } else if (currentFilter === 'pending') {
-          recruitedToShow = recruitedToShow.filter(r => !r.completed);
-        }
-
-        // Aplicar el filtro de búsqueda de reclutado de nuevo después de los filtros de estado
-        if (normalizedSearchTerm) {
-          recruitedToShow = recruitedToShow.filter(recruited =>
-            normalizeName(recruited.name).includes(normalizedSearchTerm)
-          );
-        }
-        
-        // Si no hay reclutados que mostrar con este filtro, saltar
-        if (recruitedToShow.length === 0) return;
         
         // Ordenar reclutados por ventas (mayor a menor)
         recruitedToShow.sort((a, b) => b.sales - a.sales);
