@@ -41,7 +41,6 @@
     .logo { height: 60px; width: auto; max-width: 100%; display: inline-block; }
     .logo, .logo * { fill: var(--primary-color) !important; stroke: var(--primary-color) !important; }
 
-    /* ... el resto de estilos (idénticos a la versión previa) ... */
     .announcement-banner {
       position: absolute;
       top: 0;
@@ -77,6 +76,12 @@
       padding: 2rem 1.5rem; display: flex; flex-direction: column; align-items: center; overflow: hidden;
       text-align: center; background-color: var(--light-bg); border-radius: var(--border-radius);
       box-shadow: var(--card-shadow); position: relative; }
+
+    /* Nuevo: tono con transparencia en el primer contenedor del slide 1 usando el color #7fcfda */
+    .slide:first-of-type .slide-content {
+      background: rgba(127, 207, 218, 0.12); /* tono semi-transparente de #7fcfda */
+      border: 1px solid rgba(127, 207, 218, 0.18);
+    }
 
     .slide.with-bg .slide-content { background-color: rgba(241, 239, 238, 0.95); color: var(--text-color); }
 
@@ -261,7 +266,6 @@
       </div>
     </div>
 
-    <!-- (El resto de slides es idéntico al código anterior; se mantienen) -->
     <div class="slide with-bg">
       <div class="slide-content">
         <h1 class="slide-title">¿Qué es Novaklar?</h1>
@@ -434,7 +438,7 @@
             return;
           }
 
-          // Asegurar namespace y atributos útiles
+          // Asegurar aria-label y clase
           svgEl.setAttribute('aria-label', svgEl.getAttribute('aria-label') || 'Novaklar Logo');
           svgEl.classList.add('logo');
 
@@ -442,32 +446,24 @@
           const all = svgEl.querySelectorAll('*');
           all.forEach(el => {
             try {
-              // eliminar declaración "fill" dentro del atributo style si existe
               const style = el.getAttribute('style');
               if (style && /fill\s*:/i.test(style)) {
-                // remove fill:...; from style string
                 const cleanedStyle = style.split(';').map(s => s.trim()).filter(s => !/^fill\s*:/i.test(s) && s !== '').join('; ');
                 if (cleanedStyle) el.setAttribute('style', cleanedStyle);
                 else el.removeAttribute('style');
               }
-            } catch (e) {
-              // ignore
-            }
-            // Forzar atributos
+            } catch (e) {}
             try { el.setAttribute('fill', desiredColor); } catch(e) {}
             try { el.style.fill = desiredColor; } catch(e) {}
-            // Opcional: forzar stroke igual al color si el elemento tiene stroke
             try { el.setAttribute('stroke', desiredColor); } catch(e) {}
             try { el.style.stroke = desiredColor; } catch(e) {}
           });
 
-          // También forzar en la etiqueta svg principal
           try { svgEl.setAttribute('fill', desiredColor); } catch(e) {}
           try { svgEl.style.fill = desiredColor; } catch(e) {}
           try { svgEl.setAttribute('stroke', desiredColor); } catch(e) {}
           try { svgEl.style.stroke = desiredColor; } catch(e) {}
 
-          // Serializar y añadir al contenedor inline
           const serializer = new XMLSerializer();
           const inlineSvg = serializer.serializeToString(svgEl);
           container.innerHTML = inlineSvg;
@@ -478,7 +474,7 @@
         });
     })();
 
-    // --- Resto de la app (igual que antes) ---
+    // --- Resto de la app ---
     let currentSlide = 0;
     let selectedRole = null;
     const slides = document.querySelectorAll('.slide');
