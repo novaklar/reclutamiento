@@ -439,7 +439,7 @@
   </main>
 
   <script>
-    /* Configuración: SPREADSHEET_ID actualizado según la URL proporcionada */
+    /* Configuración: SPREADSHEET_ID ya actualizado */
     const SPREADSHEET_ID = '12KqUWKpU4OsP77V1gfFDDiCbB4eQFQDdR8sJ_qLk3rI';
     const SHEET_NAME = 'Form Responses 1';
     const RANGE = 'A:F';
@@ -522,21 +522,44 @@
       });
     }
 
+    /*
+      consolidateData actualizado para la nueva estructura de la hoja:
+      - Columna B (index 1): nombre de la persona reclutada
+      - Columna C (index 2): reclutador
+      - Columna D (index 3): tipo de empresa (se captura pero no se usa actualmente)
+    */
     function consolidateData(rows){
       const map = new Map();
       let totalAffiliates = 0;
       rows.forEach(row=>{
         if(!row.c || !Array.isArray(row.c)) return;
-        const recruiterCell = row.c[1];
-        const recruitedCell = row.c[2];
-        const recruiterName = recruiterCell ? String(recruiterCell.v || recruiterCell.f || '').trim() : '';
-        const recruitedName = recruitedCell ? String(recruitedCell.v || recruitedCell.f || '').trim() : '';
 
-        if(recruiterName && recruitedName){
+        // Nuevo mapeo según indicación:
+        const recruitedCell = row.c[1]; // Columna B
+        const recruiterCell = row.c[2]; // Columna C
+        const companyCell = row.c[3];   // Columna D (opcional)
+
+        const recruitedName = recruitedCell ? String(recruitedCell.v || recruitedCell.f || '').trim() : '';
+        const recruiterName = recruiterCell ? String(recruiterCell.v || recruiterCell.f || '').trim() : '';
+        const companyType = companyCell ? String(companyCell.v || companyCell.f || '').trim() : '';
+
+        // Contar sólo si hay persona reclutada y reclutador
+        if(recruitedName && recruiterName){
           totalAffiliates++;
           const key = normalizeName(recruiterName);
-          if(map.has(key)) map.get(key).affiliateCount++;
-          else map.set(key, { name: recruiterName, affiliateCount: 1 });
+          if(map.has(key)){
+            const r = map.get(key);
+            r.affiliateCount++;
+            // opcional: podríamos acumular tipos de empresa si se desea en el futuro
+            if(companyType){
+              r.companies = r.companies || {};
+              r.companies[companyType] = (r.companies[companyType] || 0) + 1;
+            }
+          } else {
+            const obj = { name: recruiterName, affiliateCount: 1 };
+            if(companyType) obj.companies = { [companyType]: 1 };
+            map.set(key, obj);
+          }
         }
       });
 
