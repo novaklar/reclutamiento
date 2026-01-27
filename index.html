@@ -15,11 +15,12 @@
     :root{
       --bg: #f6f7f8;
       --card: #ffffff;
-      --primary: #0d4c7f;
-      --accent: #7fcfda;
+      --primary: #106b63;
+      --accent: #eec55b;
+      --secondary: #f8e48b;
       --dark: #080a33;
       --muted: rgba(8,10,51,0.45);
-      --glass: rgba(127,207,218,0.12);
+      --glass: rgba(238,197,91,0.12);
       --success: #4caf50;
       --radius: 12px;
       --max-width: 1080px;
@@ -93,7 +94,7 @@
     .btn.secondary{
       background:transparent;
       color:var(--primary);
-      border:1px solid rgba(13,76,127,0.12);
+      border:1px solid rgba(16,107,99,0.12);
     }
     .btn:active{ transform: translateY(1px); }
 
@@ -200,7 +201,7 @@
       background:transparent;
     }
     .calc-btn{
-      background:var(--success);
+      background:var(--primary);
       color:white;
       padding:10px 14px;
       border-radius:10px;
@@ -208,6 +209,9 @@
       font-weight:700;
       cursor:pointer;
       white-space:nowrap;
+    }
+    .calc-btn:hover{
+      background:#0e5c55;
     }
 
     /* Calculator results (inside same container, just below) */
@@ -248,7 +252,7 @@
       border:1px solid rgba(8,10,51,0.03);
     }
     table.summary-table thead th{
-      background: linear-gradient(90deg,var(--primary), #0b6aa6);
+      background: linear-gradient(90deg, var(--primary), #13877e);
       color:white;
       text-align:left;
       padding:12px;
@@ -269,8 +273,16 @@
       min-width:64px;
       text-align:center;
     }
-    .badge.real{ background:var(--glass); color:var(--primary); border:1px solid rgba(127,207,218,0.28); }
-    .badge.pay{ background:rgba(13,76,127,0.08); color:var(--primary); border:1px solid rgba(13,76,127,0.16); }
+    .badge.real{ 
+      background: rgba(238,197,91,0.15); 
+      color: #b0892e; 
+      border: 1px solid rgba(238,197,91,0.3); 
+    }
+    .badge.pay{ 
+      background: rgba(16,107,99,0.08); 
+      color: var(--primary); 
+      border: 1px solid rgba(16,107,99,0.16); 
+    }
 
     /* Mobile-friendly cards for small widths */
     .cards-list{ display:none; gap:12px; }
@@ -330,7 +342,7 @@
 <body>
   <header class="app-header" role="banner">
     <div class="brand">
-      <img class="logo" alt="Novaklar" src="https://raw.githubusercontent.com/novaklar/web/refs/heads/main/novaklar1.svg" />
+      <img class="logo" alt="Novaklar" src="https://raw.githubusercontent.com/novaklar/Personal/refs/heads/main/novagroup.svg" />
     </div>
 
     <nav class="nav-actions" role="navigation" aria-label="Acciones">
