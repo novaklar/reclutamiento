@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Novaft</title>
+  <title>Novaklar & Hanabi</title>
 
   <!-- Poppins only -->
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
@@ -15,12 +15,12 @@
     :root{
       --bg: #f6f7f8;
       --card: #ffffff;
-      --primary: #147a7f;
-      --accent: #f8e48b;
+      --primary: #106b63;
+      --accent: #eec55b;
       --secondary: #f8e48b;
       --dark: #080a33;
       --muted: rgba(8,10,51,0.45);
-      --glass: rgba(248,228,139,0.12);
+      --glass: rgba(238,197,91,0.12);
       --success: #4caf50;
       --radius: 12px;
       --max-width: 1080px;
@@ -33,7 +33,7 @@
     body{
       margin:0;
       font-family: "Poppins", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-      background: linear-gradient(180deg, #f4f6fc 0%, #ffffff 100%);
+      background: linear-gradient(180deg, var(--bg) 0%, #ffffff 100%);
       color: var(--dark);
       -webkit-font-smoothing:antialiased;
       -moz-osx-font-smoothing:grayscale;
@@ -67,6 +67,11 @@
       gap:12px;
       flex:1;
     }
+    header img.logo{
+      height:36px;
+      width:auto;
+      display:block;
+    }
     header .nav-actions{
       display:flex;
       gap:8px;
@@ -89,7 +94,7 @@
     .btn.secondary{
       background:transparent;
       color:var(--primary);
-      border:1px solid rgba(20,122,127,0.12);
+      border:1px solid rgba(16,107,99,0.12);
     }
     .btn:active{ transform: translateY(1px); }
 
@@ -135,14 +140,84 @@
     .stat .label{ font-size:0.85rem; color:var(--muted); }
     .stat .value{ font-weight:700; font-size:1.2rem; color:var(--primary); margin-top:6px; }
 
-    /* Controls: refresh (search removed) */
+    /* Controls: calculator + refresh (search removed) */
     .controls{
       display:flex;
       gap:10px;
       align-items:center;
       margin-top:6px;
       flex-wrap:wrap;
-      justify-content:flex-end;
+      justify-content:space-between;
+    }
+    .controls-left{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      flex:1;
+    }
+
+    /* Calculator container (nuevo) */
+    .calculator-card{
+      background: var(--card);
+      border-radius: 12px;
+      padding: 12px;
+      box-shadow: 0 8px 20px rgba(8,10,51,0.06);
+      border: 1px solid rgba(8,10,51,0.03);
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+      min-width: 220px;
+    }
+    .calculator-top{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      justify-content:space-between;
+      flex-wrap:wrap;
+    }
+    .calculator{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      width:100%;
+    }
+    .amount{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      background:transparent;
+      border-radius:10px;
+      padding:8px;
+      border:1px solid rgba(8,10,51,0.04);
+      flex:1;
+    }
+    .amount input{
+      border:0;
+      outline:0;
+      font-weight:600;
+      font-size:1rem;
+      width:140px;
+      text-align:right;
+      background:transparent;
+    }
+    .calc-btn{
+      background:var(--primary);
+      color:white;
+      padding:10px 14px;
+      border-radius:10px;
+      border:none;
+      font-weight:700;
+      cursor:pointer;
+      white-space:nowrap;
+    }
+    .calc-btn:hover{
+      background:#0e5c55;
+    }
+
+    /* Calculator results (inside same container, just below) */
+    #calculator-results {
+      margin-top: 6px;
+      width:100%;
     }
 
     /* Legend */
@@ -177,7 +252,7 @@
       border:1px solid rgba(8,10,51,0.03);
     }
     table.summary-table thead th{
-      background: linear-gradient(90deg, var(--primary), #1a8f94);
+      background: linear-gradient(90deg, var(--primary), #13877e);
       color:white;
       text-align:left;
       padding:12px;
@@ -199,14 +274,14 @@
       text-align:center;
     }
     .badge.real{ 
-      background: rgba(248,228,139,0.15); 
-      color: #b8a44e; 
-      border: 1px solid rgba(248,228,139,0.3); 
+      background: rgba(238,197,91,0.15); 
+      color: #b0892e; 
+      border: 1px solid rgba(238,197,91,0.3); 
     }
     .badge.pay{ 
-      background: rgba(20,122,127,0.08); 
+      background: rgba(16,107,99,0.08); 
       color: var(--primary); 
-      border: 1px solid rgba(20,122,127,0.16); 
+      border: 1px solid rgba(16,107,99,0.16); 
     }
 
     /* Mobile-friendly cards for small widths */
@@ -237,12 +312,17 @@
     /* Responsive rules (mobile-first) */
     @media (max-width: 880px){
       .stats{ grid-template-columns: repeat(2,1fr); }
+      header img.logo{ height:32px; }
       .card .value{ font-size:1.05rem; }
+      .amount input{ width:120px; }
     }
     @media (max-width: 640px){
       .grid{ gap:10px; }
       .stats{ grid-template-columns: 1fr; }
       .controls{ flex-direction:column; align-items:stretch; gap:10px; }
+      .controls-left{ width:100%; justify-content:space-between; }
+      .calculator{ width:100%; }
+      .amount input{ width:100%; text-align:left; }
       table.summary-table thead{ display:none; }
       table.summary-table tbody tr{ display:block; border-bottom: 10px solid transparent; margin-bottom:8px; }
       table.summary-table tbody td{
@@ -262,7 +342,7 @@
 <body>
   <header class="app-header" role="banner">
     <div class="brand">
-      <!-- Logo eliminado -->
+      <img class="logo" alt="Novaklar" src="https://raw.githubusercontent.com/novaklar/Personal/refs/heads/main/novagroup.svg" />
     </div>
 
     <nav class="nav-actions" role="navigation" aria-label="Acciones">
@@ -276,7 +356,7 @@
   <main class="wrap" role="main">
     <div class="page-head" aria-hidden="true">
       <h1 class="page-title">DTO reclutamiento</h1>
-      <p class="page-sub">Novaft</p>
+      <p class="page-sub">Novaklar &amp; Hanabi</p>
     </div>
 
     <section class="grid" aria-live="polite">
@@ -296,9 +376,33 @@
         </div>
       </div>
 
-      <!-- Controls: refresh (calculator removed) -->
+      <!-- Controls: calculator container + refresh (search removed) -->
       <div>
         <div class="controls">
+          <div class="controls-left">
+            <!-- Calculator now inside its own container -->
+            <div class="calculator-card" id="calculator-section" style="display:none" aria-labelledby="calculator-title">
+              <div class="calculator-top">
+                <div id="calculator-title" style="font-weight:700; color:var(--primary)">Calculadora de reparto</div>
+                <div class="muted" style="font-size:0.9rem">Distribución por porcentaje</div>
+              </div>
+
+              <div class="calculator" role="group" aria-label="Calculadora de reparto">
+                <div class="amount">
+                  <span class="muted" aria-hidden="true">$</span>
+                  <input id="total-amount" inputmode="numeric" pattern="[0-9]*" placeholder="Monto a repartir" aria-label="Monto total a repartir" />
+                </div>
+                <button id="calculate-btn" class="calc-btn" style="display:none" aria-controls="calculator-results">
+                  <i class="fas fa-calculator" aria-hidden="true"></i>
+                  Calcular
+                </button>
+              </div>
+
+              <!-- Results aparecerán dentro de este mismo contenedor, justo debajo -->
+              <div id="calculator-results" style="display:none"></div>
+            </div>
+          </div>
+
           <div>
             <button id="refresh-btn" class="btn" title="Actualizar ahora">
               <i id="refresh-icon" class="fas fa-sync-alt" aria-hidden="true"></i>
@@ -366,6 +470,10 @@
     const recruitersCountEl = document.getElementById('recruiters-count');
     const totalRecruitedEl = document.getElementById('total-recruited');
     const totalPercentageEl = document.getElementById('total-percentage');
+    const calculatorSection = document.getElementById('calculator-section');
+    const totalAmountInput = document.getElementById('total-amount');
+    const calculateBtn = document.getElementById('calculate-btn');
+    const calculatorResults = document.getElementById('calculator-results');
     const legend = document.getElementById('legend');
 
     let summaryData = [];
@@ -487,6 +595,8 @@
       totalPercentageEl.textContent = totalRounded + '%';
 
       statsBar.style.display = 'grid';
+      calculatorSection.style.display = 'flex';
+      calculateBtn.style.display = 'inline-flex';
       legend.style.display = 'flex';
       document.getElementById('summary-container').style.display = 'block';
       noDataEl.style.display = 'none';
@@ -537,6 +647,72 @@
       return (text+'').replace(/[&<>"']/g, (m) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
     }
 
+    /* Calculadora: distribución y ajuste */
+    function calculateDistribution(totalAmount){
+      if(!summaryData || summaryData.length === 0) return [];
+      const dist = summaryData.map(r => {
+        const amount = Math.round((totalAmount * r.roundedPercentage) / 100);
+        return { name: r.name, percentage: r.roundedPercentage, amount };
+      });
+
+      let totalDistributed = dist.reduce((s,i)=>s+i.amount,0);
+      let diff = totalAmount - totalDistributed;
+      if(diff !== 0){
+        const byPct = [...dist].sort((a,b)=> b.percentage - a.percentage);
+        const sign = Math.sign(diff);
+        let i = 0;
+        while(diff !== 0){
+          byPct[i % byPct.length].amount += sign;
+          const target = dist.find(d => d.name === byPct[i % byPct.length].name);
+          target.amount = byPct[i % byPct.length].amount;
+          diff -= sign;
+          i++;
+        }
+      }
+      return dist;
+    }
+
+    function showCalculatorResults(totalAmount){
+      const distribution = calculateDistribution(totalAmount);
+      if(distribution.length === 0){
+        calculatorResults.style.display = 'none';
+        return;
+      }
+      const totalDistributed = distribution.reduce((s,i)=>s+i.amount,0);
+      let html = '<div class="card" style="padding:8px"><table style="width:100%">';
+      html += '<thead><tr><th style="text-align:left">Reclutadora</th><th style="text-align:right">Porcentaje</th><th style="text-align:right">Monto</th></tr></thead><tbody>';
+      distribution.forEach(d => {
+        html += `<tr><td>${escapeHtml(d.name)}</td><td style="text-align:right">${d.percentage}%</td><td style="text-align:right"><strong>$${formatNumber(d.amount)}</strong></td></tr>`;
+      });
+      html += `</tbody></table><div style="text-align:right; margin-top:8px; font-weight:700">Total: $${formatNumber(totalDistributed)}</div></div>`;
+      calculatorResults.innerHTML = html;
+      calculatorResults.style.display = 'block';
+    }
+
+    /* Formato del input monto y eventos */
+    totalAmountInput.addEventListener('input', (e) => {
+      const raw = String(e.target.value).replace(/\D/g,'');
+      if(raw === '') { e.target.value = ''; return; }
+      e.target.value = formatNumber(parseInt(raw,10));
+    });
+
+    calculateBtn.addEventListener('click', () => {
+      const raw = String(totalAmountInput.value).replace(/\D/g,'');
+      if(raw === '') {
+        calculatorResults.style.display = 'none';
+        return;
+      }
+      const amount = parseInt(raw,10);
+      if(isNaN(amount) || amount <= 0) return;
+      showCalculatorResults(amount);
+      // Scroll suave para móviles: aseguramos los resultados estén visibles justo debajo
+      calculatorResults.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    });
+
+    totalAmountInput.addEventListener('keydown', (e) => {
+      if(e.key === 'Enter') calculateBtn.click();
+    });
+
     /* Responsive: mostrar u ocultar tabla/cards según ancho */
     function adjustView(){
       const mobile = window.innerWidth <= 640;
@@ -553,6 +729,7 @@
         errorEl.style.display = 'none';
         noDataEl.style.display = 'none';
         document.getElementById('summary-container').style.display = 'none';
+        calculatorResults.style.display = 'none';
         spinOn(refreshBtn);
 
         refreshBtn.disabled = true;
