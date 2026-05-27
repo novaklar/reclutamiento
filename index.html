@@ -59,7 +59,7 @@
       padding: 20px 16px;
       border-radius: 12px;
       text-decoration: none;
-      font-weight: 700;
+      font-weight: 400;
       font-size: 0.95rem;
       aspect-ratio: 1;
       text-align: center;
@@ -69,13 +69,19 @@
     }
     .action-block.back {
       background-color: #147a7f;
-      color: #f8e48b;
+      color: #ffffff;
       border: 2px solid #147a7f;
+    }
+    .action-block.back i {
+      color: #f8e48b;
     }
     .action-block.register {
       background-color: #f8e48b;
-      color: #147a7f;
+      color: #000000;
       border: 2px solid #f8e48b;
+    }
+    .action-block.register i {
+      color: #147a7f;
     }
     .action-block:active{ transform: scale(0.97); }
 
@@ -479,7 +485,8 @@
     const legend = document.getElementById('legend');
 
     let summaryData = [];
-    const numberFormatter = new Intl.NumberFormat('es-ES');
+    // Usar punto como separador de miles y coma como separador decimal (estilo europeo)
+    const numberFormatter = new Intl.NumberFormat('de-DE');
 
     function normalizeName(name){
       if(!name) return '';
