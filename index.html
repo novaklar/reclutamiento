@@ -3,102 +3,83 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Novaklar & Hanabi</title>
+  <title>Novaft</title>
 
   <!-- Poppins only -->
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
 
-  <!-- Font Awesome (opcional para iconos) -->
+  <!-- Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 
   <style>
     :root{
-      --bg: #f6f7f8;
+      --bg: #f4f6fc;
       --card: #ffffff;
-      --primary: #106b63;
-      --accent: #eec55b;
-      --secondary: #f8e48b;
-      --dark: #080a33;
-      --muted: rgba(8,10,51,0.45);
-      --glass: rgba(238,197,91,0.12);
-      --success: #4caf50;
+      --primary: #147a7f;
+      --accent: #f8e48b;
+      --dark: #000000;
+      --muted: rgba(0,0,0,0.45);
       --radius: 12px;
       --max-width: 1080px;
       --gap: 14px;
     }
 
-    /* Tipografía única: Poppins */
     * { box-sizing: border-box; }
     html,body{ height:100%; }
     body{
       margin:0;
       font-family: "Poppins", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-      background: linear-gradient(180deg, var(--bg) 0%, #ffffff 100%);
-      color: var(--dark);
+      background-color: #f4f6fc;
+      color: #000000;
       -webkit-font-smoothing:antialiased;
       -moz-osx-font-smoothing:grayscale;
       line-height:1.45;
       padding-bottom: 48px;
     }
 
-    /* Contenedor centrado con padding mobile-first */
     .wrap{
       max-width: var(--max-width);
       margin: 0 auto;
       padding: 16px;
     }
 
-    /* Header compacto y accesible (simplificado) */
-    header.app-header{
-      position: sticky;
-      top: 0;
-      z-index: 60;
-      display:flex;
-      align-items:center;
-      gap:12px;
-      padding:10px 16px;
-      background: linear-gradient(90deg, rgba(255,255,255,0.02), rgba(255,255,255,0));
-      backdrop-filter: blur(6px);
-      border-bottom: 1px solid rgba(8,10,51,0.04);
+    /* Bloques cuadrados de acción */
+    .action-blocks {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 20px;
     }
-    header .brand{
-      display:flex;
-      align-items:center;
-      gap:12px;
-      flex:1;
+    .action-block {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 20px 16px;
+      border-radius: 12px;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 0.95rem;
+      aspect-ratio: 1;
+      text-align: center;
     }
-    header img.logo{
-      height:36px;
-      width:auto;
-      display:block;
+    .action-block i {
+      font-size: 1.8rem;
     }
-    header .nav-actions{
-      display:flex;
-      gap:8px;
-      align-items:center;
+    .action-block.back {
+      background-color: #147a7f;
+      color: #f8e48b;
+      border: 2px solid #147a7f;
     }
-    .btn {
-      display:inline-flex;
-      align-items:center;
-      gap:8px;
-      background:var(--primary);
-      color:white;
-      border:none;
-      padding:8px 12px;
-      border-radius:10px;
-      font-weight:600;
-      font-size:0.95rem;
-      cursor:pointer;
-      text-decoration:none;
+    .action-block.register {
+      background-color: #f8e48b;
+      color: #147a7f;
+      border: 2px solid #f8e48b;
     }
-    .btn.secondary{
-      background:transparent;
-      color:var(--primary);
-      border:1px solid rgba(16,107,99,0.12);
-    }
-    .btn:active{ transform: translateY(1px); }
+    .action-block:active{ transform: scale(0.97); }
 
-    /* Subtítulo y título */
+    /* Título y subtítulo */
     .page-head{
       text-align:center;
       margin: 18px 0 6px;
@@ -107,16 +88,15 @@
       margin:0;
       font-size:1.45rem;
       font-weight:700;
-      color:var(--dark);
+      color: #000000;
     }
     p.page-sub{
       margin:6px 0 0;
-      color:var(--muted);
+      color: var(--muted);
       font-size:0.95rem;
       font-weight:600;
     }
 
-    /* Grid principal: stats + contenido */
     .grid{
       display:grid;
       grid-template-columns: 1fr;
@@ -124,7 +104,7 @@
       margin-top:14px;
     }
 
-    /* Stats cards (responsive) */
+    /* Stats con equilibrio de colores */
     .stats{
       display:grid;
       grid-template-columns: repeat(3,1fr);
@@ -134,13 +114,19 @@
       background: var(--card);
       border-radius: var(--radius);
       padding:12px;
-      box-shadow: 0 6px 18px rgba(8,10,51,0.06);
-      border: 1px solid rgba(8,10,51,0.03);
+      box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+      border: 1px solid rgba(0,0,0,0.03);
     }
     .stat .label{ font-size:0.85rem; color:var(--muted); }
-    .stat .value{ font-weight:700; font-size:1.2rem; color:var(--primary); margin-top:6px; }
+    .stat .value{ 
+      font-weight:700; 
+      font-size:1.2rem; 
+      margin-top:6px;
+    }
+    .stat:nth-child(1) .value { color: #147a7f; }
+    .stat:nth-child(2) .value { color: #d4b843; }
+    .stat:nth-child(3) .value { color: #147a7f; }
 
-    /* Controls: calculator + refresh (search removed) */
     .controls{
       display:flex;
       gap:10px;
@@ -156,13 +142,13 @@
       flex:1;
     }
 
-    /* Calculator container (nuevo) */
+    /* Calculator con acento amarillo */
     .calculator-card{
-      background: var(--card);
+      background-color: #ffffff;
       border-radius: 12px;
       padding: 12px;
-      box-shadow: 0 8px 20px rgba(8,10,51,0.06);
-      border: 1px solid rgba(8,10,51,0.03);
+      box-shadow: 0 8px 20px rgba(248,228,139,0.15);
+      border: 1px solid rgba(248,228,139,0.3);
       display:flex;
       flex-direction:column;
       gap:10px;
@@ -174,6 +160,10 @@
       align-items:center;
       justify-content:space-between;
       flex-wrap:wrap;
+    }
+    #calculator-title {
+      font-weight:700;
+      color: #147a7f;
     }
     .calculator{
       display:flex;
@@ -188,7 +178,7 @@
       background:transparent;
       border-radius:10px;
       padding:8px;
-      border:1px solid rgba(8,10,51,0.04);
+      border:1px solid rgba(248,228,139,0.3);
       flex:1;
     }
     .amount input{
@@ -201,7 +191,7 @@
       background:transparent;
     }
     .calc-btn{
-      background:var(--primary);
+      background-color: #147a7f;
       color:white;
       padding:10px 14px;
       border-radius:10px;
@@ -209,12 +199,13 @@
       font-weight:700;
       cursor:pointer;
       white-space:nowrap;
+      transition: all 0.2s ease;
     }
     .calc-btn:hover{
-      background:#0e5c55;
+      background-color: #f8e48b;
+      color: #147a7f;
     }
 
-    /* Calculator results (inside same container, just below) */
     #calculator-results {
       margin-top: 6px;
       width:100%;
@@ -235,10 +226,13 @@
       height:12px;
       border-radius:50%;
     }
-    .legend .dot.primary{ background:var(--primary); }
-    .legend .dot.secondary{ background:var(--accent); }
+    .legend .dot.primary{ 
+      background-color: #147a7f;
+    }
+    .legend .dot.secondary{ 
+      background-color: #f8e48b;
+    }
 
-    /* Summary: table on desktop, cards on small screens */
     .summary{
       margin-top:8px;
     }
@@ -248,20 +242,21 @@
       background:var(--card);
       border-radius:10px;
       overflow:hidden;
-      box-shadow: 0 8px 20px rgba(8,10,51,0.06);
-      border:1px solid rgba(8,10,51,0.03);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.06);
+      border:1px solid rgba(0,0,0,0.03);
     }
     table.summary-table thead th{
-      background: linear-gradient(90deg, var(--primary), #13877e);
-      color:white;
+      background-color: #f8e48b;
+      color: #000000;
       text-align:left;
       padding:12px;
-      font-weight:600;
+      font-weight:700;
       font-size:0.9rem;
+      border-bottom: 2px solid #147a7f;
     }
     table.summary-table tbody td{
       padding:12px;
-      border-bottom:1px solid rgba(8,10,51,0.04);
+      border-bottom:1px solid rgba(0,0,0,0.04);
       font-size:0.92rem;
     }
     .badge{
@@ -274,17 +269,16 @@
       text-align:center;
     }
     .badge.real{ 
-      background: rgba(238,197,91,0.15); 
-      color: #b0892e; 
-      border: 1px solid rgba(238,197,91,0.3); 
+      background-color: rgba(248,228,139,0.2); 
+      color: #8b7519; 
+      border: 1px solid rgba(248,228,139,0.4); 
     }
     .badge.pay{ 
-      background: rgba(16,107,99,0.08); 
-      color: var(--primary); 
-      border: 1px solid rgba(16,107,99,0.16); 
+      background-color: rgba(20,122,127,0.1); 
+      color: #147a7f; 
+      border: 1px solid rgba(20,122,127,0.2); 
     }
 
-    /* Mobile-friendly cards for small widths */
     .cards-list{ display:none; gap:12px; }
     .card-row{
       display:flex;
@@ -294,25 +288,34 @@
     }
     .card-row .meta{ color:var(--muted); font-size:0.85rem; }
 
-    /* Utilities */
     .muted{ color:var(--muted); }
     .center{ text-align:center; }
 
-    /* No-data / loading / error */
     .status {
       margin-top:12px;
       padding:12px;
       border-radius:10px;
       background:var(--card);
-      border:1px dashed rgba(8,10,51,0.04);
+      border:1px dashed rgba(0,0,0,0.04);
       color:var(--muted);
       text-align:center;
     }
 
-    /* Responsive rules (mobile-first) */
+    /* Refresh button */
+    #refresh-btn {
+      background-color: #f8e48b;
+      color: #147a7f;
+      border: 1px solid rgba(248,228,139,0.4);
+      font-weight: 700;
+    }
+    #refresh-btn:hover {
+      background-color: #147a7f;
+      color: white;
+    }
+
+    /* Responsive */
     @media (max-width: 880px){
       .stats{ grid-template-columns: repeat(2,1fr); }
-      header img.logo{ height:32px; }
       .card .value{ font-size:1.05rem; }
       .amount input{ width:120px; }
     }
@@ -329,34 +332,43 @@
         display:flex;
         justify-content:space-between;
         padding:10px;
-        border-bottom:1px solid rgba(8,10,51,0.04);
+        border-bottom:1px solid rgba(0,0,0,0.04);
       }
       .cards-list{ display:flex; flex-direction:column; }
       .summary-table{ display:none; }
       .card{
         padding:10px;
       }
+      .action-blocks {
+        gap: 10px;
+      }
+      .action-block {
+        padding: 16px 12px;
+        font-size: 0.85rem;
+      }
+      .action-block i {
+        font-size: 1.5rem;
+      }
     }
   </style>
 </head>
 <body>
-  <header class="app-header" role="banner">
-    <div class="brand">
-      <img class="logo" alt="Novaklar" src="https://raw.githubusercontent.com/novaklar/Personal/refs/heads/main/novagroup.svg" />
-    </div>
-
-    <nav class="nav-actions" role="navigation" aria-label="Acciones">
-      <a class="btn secondary" href="https://novaklar.github.io/Personal/" aria-label="Regresar">
+  <main class="wrap" role="main">
+    <!-- Bloques cuadrados de acción -->
+    <div class="action-blocks">
+      <a class="action-block back" href="https://novaklar.github.io/Personal/" aria-label="Regresar">
         <i class="fas fa-arrow-left" aria-hidden="true"></i>
         Regresar
       </a>
-    </nav>
-  </header>
+      <a class="action-block register" href="https://docs.google.com/forms/d/e/1FAIpQLSeH-s-NXiFe56qRP3_GKOWcVeSfMk4jz3ZmwRrs8ilAOhruUw/viewform?usp=header" target="_blank" rel="noopener" aria-label="Registrar">
+        <i class="fas fa-user-plus" aria-hidden="true"></i>
+        Registrar
+      </a>
+    </div>
 
-  <main class="wrap" role="main">
     <div class="page-head" aria-hidden="true">
       <h1 class="page-title">DTO reclutamiento</h1>
-      <p class="page-sub">Novaklar &amp; Hanabi</p>
+      <p class="page-sub">Novaft</p>
     </div>
 
     <section class="grid" aria-live="polite">
@@ -376,14 +388,13 @@
         </div>
       </div>
 
-      <!-- Controls: calculator container + refresh (search removed) -->
+      <!-- Controls -->
       <div>
         <div class="controls">
           <div class="controls-left">
-            <!-- Calculator now inside its own container -->
             <div class="calculator-card" id="calculator-section" style="display:none" aria-labelledby="calculator-title">
               <div class="calculator-top">
-                <div id="calculator-title" style="font-weight:700; color:var(--primary)">Calculadora de reparto</div>
+                <div id="calculator-title">Calculadora de reparto</div>
                 <div class="muted" style="font-size:0.9rem">Distribución por porcentaje</div>
               </div>
 
@@ -398,7 +409,6 @@
                 </button>
               </div>
 
-              <!-- Results aparecerán dentro de este mismo contenedor, justo debajo -->
               <div id="calculator-results" style="display:none"></div>
             </div>
           </div>
@@ -419,7 +429,6 @@
 
       <!-- Summary -->
       <div class="summary" id="summary-container" style="display:none">
-        <!-- Table for desktop -->
         <table class="summary-table" aria-label="Resumen de reclutadoras">
           <thead>
             <tr>
@@ -431,15 +440,10 @@
               <th>Diferencia</th>
             </tr>
           </thead>
-          <tbody id="summary-body">
-            <!-- filas generadas por JS -->
-          </tbody>
+          <tbody id="summary-body"></tbody>
         </table>
 
-        <!-- Cards for mobile -->
-        <div class="cards-list" id="summary-cards" aria-hidden="true">
-          <!-- generadas por JS -->
-        </div>
+        <div class="cards-list" id="summary-cards" aria-hidden="true"></div>
       </div>
 
       <div id="loading" class="status" role="status">Cargando datos…</div>
@@ -451,13 +455,11 @@
   </main>
 
   <script>
-    /* Configuración: SPREADSHEET_ID ya actualizado */
     const SPREADSHEET_ID = '12KqUWKpU4OsP77V1gfFDDiCbB4eQFQDdR8sJ_qLk3rI';
     const SHEET_NAME = 'Form Responses 1';
     const RANGE = 'A:F';
     const UPDATE_INTERVAL = 5 * 60 * 1000;
 
-    /* Elementos */
     const summaryBody = document.getElementById('summary-body');
     const summaryCards = document.getElementById('summary-cards');
     const loadingEl = document.getElementById('loading');
@@ -479,7 +481,6 @@
     let summaryData = [];
     const numberFormatter = new Intl.NumberFormat('es-ES');
 
-    /* Utilidades */
     function normalizeName(name){
       if(!name) return '';
       return name.toString().toLowerCase()
@@ -494,7 +495,6 @@
       setTimeout(()=> { refreshIcon.style.transform = ''; }, 900);
     }
 
-    /* Cálculos de porcentaje y ajuste */
     function calculatePercentages(recruitersData){
       const totalAffiliates = recruitersData.reduce((s,r)=>s+r.affiliateCount,0);
       if(totalAffiliates === 0) return [];
@@ -503,7 +503,6 @@
         return {...r, realPercentage: real, roundedPercentage: Math.round(real)};
       });
 
-      // Ajuste para sumar 100
       let totalRounded = withReal.reduce((s,r)=>s+r.roundedPercentage,0);
       let diff = 100 - totalRounded;
       if(diff !== 0){
@@ -534,35 +533,26 @@
       });
     }
 
-    /*
-      consolidateData actualizado para la nueva estructura de la hoja:
-      - Columna B (index 1): nombre de la persona reclutada
-      - Columna C (index 2): reclutador
-      - Columna D (index 3): tipo de empresa (se captura pero no se usa actualmente)
-    */
     function consolidateData(rows){
       const map = new Map();
       let totalAffiliates = 0;
       rows.forEach(row=>{
         if(!row.c || !Array.isArray(row.c)) return;
 
-        // Nuevo mapeo según indicación:
-        const recruitedCell = row.c[1]; // Columna B
-        const recruiterCell = row.c[2]; // Columna C
-        const companyCell = row.c[3];   // Columna D (opcional)
+        const recruitedCell = row.c[1];
+        const recruiterCell = row.c[2];
+        const companyCell = row.c[3];
 
         const recruitedName = recruitedCell ? String(recruitedCell.v || recruitedCell.f || '').trim() : '';
         const recruiterName = recruiterCell ? String(recruiterCell.v || recruiterCell.f || '').trim() : '';
         const companyType = companyCell ? String(companyCell.v || companyCell.f || '').trim() : '';
 
-        // Contar sólo si hay persona reclutada y reclutador
         if(recruitedName && recruiterName){
           totalAffiliates++;
           const key = normalizeName(recruiterName);
           if(map.has(key)){
             const r = map.get(key);
             r.affiliateCount++;
-            // opcional: podríamos acumular tipos de empresa si se desea en el futuro
             if(companyType){
               r.companies = r.companies || {};
               r.companies[companyType] = (r.companies[companyType] || 0) + 1;
@@ -580,7 +570,6 @@
       return { summary, stats: { totalRecruiters: map.size, totalAffiliates } };
     }
 
-    /* Render summary: table + mobile cards */
     function renderSummary(data){
       summaryData = data.summary;
       if(summaryData.length === 0){
@@ -647,7 +636,6 @@
       return (text+'').replace(/[&<>"']/g, (m) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
     }
 
-    /* Calculadora: distribución y ajuste */
     function calculateDistribution(totalAmount){
       if(!summaryData || summaryData.length === 0) return [];
       const dist = summaryData.map(r => {
@@ -679,17 +667,16 @@
         return;
       }
       const totalDistributed = distribution.reduce((s,i)=>s+i.amount,0);
-      let html = '<div class="card" style="padding:8px"><table style="width:100%">';
+      let html = '<div class="card" style="padding:8px; border-color: rgba(248,228,139,0.3);"><table style="width:100%">';
       html += '<thead><tr><th style="text-align:left">Reclutadora</th><th style="text-align:right">Porcentaje</th><th style="text-align:right">Monto</th></tr></thead><tbody>';
       distribution.forEach(d => {
         html += `<tr><td>${escapeHtml(d.name)}</td><td style="text-align:right">${d.percentage}%</td><td style="text-align:right"><strong>$${formatNumber(d.amount)}</strong></td></tr>`;
       });
-      html += `</tbody></table><div style="text-align:right; margin-top:8px; font-weight:700">Total: $${formatNumber(totalDistributed)}</div></div>`;
+      html += `</tbody></table><div style="text-align:right; margin-top:8px; font-weight:700; color: #147a7f;">Total: $${formatNumber(totalDistributed)}</div></div>`;
       calculatorResults.innerHTML = html;
       calculatorResults.style.display = 'block';
     }
 
-    /* Formato del input monto y eventos */
     totalAmountInput.addEventListener('input', (e) => {
       const raw = String(e.target.value).replace(/\D/g,'');
       if(raw === '') { e.target.value = ''; return; }
@@ -705,7 +692,6 @@
       const amount = parseInt(raw,10);
       if(isNaN(amount) || amount <= 0) return;
       showCalculatorResults(amount);
-      // Scroll suave para móviles: aseguramos los resultados estén visibles justo debajo
       calculatorResults.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     });
 
@@ -713,7 +699,6 @@
       if(e.key === 'Enter') calculateBtn.click();
     });
 
-    /* Responsive: mostrar u ocultar tabla/cards según ancho */
     function adjustView(){
       const mobile = window.innerWidth <= 640;
       document.querySelector('.summary-table').style.display = mobile ? 'none' : '';
@@ -722,7 +707,6 @@
     }
     window.addEventListener('resize', () => { setTimeout(adjustView, 120); });
 
-    /* Carga de datos desde Google Sheets */
     async function loadDataFromSheets(){
       try{
         loadingEl.style.display = 'block';
@@ -755,7 +739,6 @@
       }
     }
 
-    /* Auto-refresh */
     let autoInterval;
     function startAutoRefresh(){
       loadDataFromSheets();
@@ -767,7 +750,6 @@
       startAutoRefresh();
     });
 
-    // Inicial
     startAutoRefresh();
   </script>
 </body>
